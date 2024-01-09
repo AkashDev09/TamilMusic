@@ -4,7 +4,6 @@ import ButtomTab from './ButtomTab'
 import { StyleSheet, View } from 'react-native'
 
 function Index(props) {
-    console.log(props,"props")
     return (
         <View>
             <Header />

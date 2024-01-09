@@ -13,7 +13,6 @@ import Index from './Layout';
 const App = () => {
   return(
     <My_stack />
-    // <Index/>
   ) ;
 };
 

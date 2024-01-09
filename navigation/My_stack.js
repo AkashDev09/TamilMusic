@@ -1,10 +1,11 @@
 import React from 'react'
-const Stack = createNativeStackNavigator();
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from '../pages/Home';
 import Player from '../pages/Player';
 import Index from '../Layout';
+
+const Stack = createNativeStackNavigator();
 
 const Router = [
     {
