@@ -6,14 +6,11 @@
  */
 
 import React from 'react';
-import {Text, View} from 'react-native';
-import My_stack from './navigation/My_stack';
-import Index from './Layout';
+// import My_Bottom_Tab from './navigation/My_Bottom_Tab';
+import My_stack from './navigation/My_Stack';
 
 const App = () => {
-  return(
-    <My_stack />
-  ) ;
+  return <My_stack />;
 };
 
 export default App;
