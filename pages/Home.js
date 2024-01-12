@@ -1,12 +1,12 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from "react-native-vector-icons/AntDesign"
 import Fav from "react-native-vector-icons/MaterialIcons"
 import Pla from "react-native-vector-icons/SimpleLineIcons"
 import Re from "react-native-vector-icons/MaterialCommunityIcons"
 
 
-const Home = () => {
+const Home = ({ navigation }) => {
     const myIcon = <Icon name="search1" size={20} color="tomato" />;
 
     const collection_Data = [
@@ -31,7 +31,9 @@ const Home = () => {
         <View style={styles.Home_con}>
             <View style={styles.header}>
                 <Text style={styles.header_tittel}>My Music</Text>
-                {myIcon}
+                <TouchableOpacity onPress={() => navigation.navigate("Search")}>
+                    {myIcon}
+                </TouchableOpacity>
             </View>
             <ScrollView>
                 <View style={styles.collections_home} >
@@ -53,7 +55,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff"
     },
     header: {
-        borderBottomWidth:1,
+        borderBottomWidth: 1,
         borderBottomColor: "#313131",
         height: 50,
         backgroundColor: "#000",
@@ -87,8 +89,8 @@ const styles = StyleSheet.create({
     },
     collections_text: {
         fontSize: 15,
-        fontWeight: "500",
-        color: "#fff"
+        color: "#fff",
+        fontWeight: "500"
     }
 })
 
