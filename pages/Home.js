@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, ImageBackground, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from "react-native-vector-icons/AntDesign"
 import Fav from "react-native-vector-icons/MaterialIcons"
 import Pla from "react-native-vector-icons/SimpleLineIcons"
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     },
     header_tittel: {
         fontSize: 15,
-        fontWeight: "350",
+        fontWeight: "300",
         color: "tomato"
     },
     collections_home: {

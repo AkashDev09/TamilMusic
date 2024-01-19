@@ -42,7 +42,7 @@ function My_Bottom_Tab() {
                 headerShown: false,
             })}
         >
-            {Router.map(x => <Tab.Screen name={x.name} component={x.component} />)}
+            {Router.map(x => <Tab.Screen key={x.name} name={x.name}  component={x.component} />)}
         </Tab.Navigator>
     )
 }

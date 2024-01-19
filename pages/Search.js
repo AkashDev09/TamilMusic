@@ -1,82 +1,101 @@
-import { Link } from '@react-navigation/native';
 import React, { useState } from 'react'
-import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { FlatList, ImageBackground, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import Icon from 'react-native-vector-icons/Feather';
-import indications from "../Assets/Images/set-diet-sound-bars.gif"
+import PlayIcon from 'react-native-vector-icons/AntDesign';
+import SongsList from "../pages/Data/Songs.json"
 
 function Search({ navigation }) {
-    const itemList = [
-        { name: "Air conditioner", id: 0 },
-        { name: "Refrigerator", id: 1 },
-        { name: "Microwaves", id: 2 },
-        { name: "Washing machine", id: 3 },
-        { name: "Fresh", id: 4 },
-        { name: "Mobiles", id: 5 },
-        { name: "Fashion", id: 6 },
-        { name: "Electronics", id: 7 },
-        { name: "Women Clothing", id: 8 },
-        { name: "Handbags", id: 9 },
-        { name: "Watches", id: 10 },
-        { name: "Jewelry", id: 11 },
-        { name: "Air conditioner", id: 12 },
-        { name: "Refrigerator", id: 13 },
-        { name: "Microwaves", id: 14 },
-        { name: "Washing machine", id: 15 },
-        { name: "Fresh", id: 16 },
-        { name: "Mobiles", id: 17 },
-        { name: "Fashion", id: 18 },
-        { name: "Electronics", id: 19 },
-        { name: "Women Clothing", id: 20 },
-        { name: "Handbags", id: 21 },
-        { name: "Watches", id: 22 },
-        { name: "Jewelry", id: 23 }
-    ]
+
+    const itemList = SongsList.station.map((x, i) => ({ ...x, Id: i + 1 }))
     const [filteredList, setFilteredList] = useState(itemList);
     const [searchManagement, setManagement] = useState({ activeId: "" });
-
-    console.log(searchManagement, "search");
+    const [isSearching, setIsSearching] = React.useState({ value: "", active: false });
 
     const filterbySearch = (e) => {
-        let query = e
-        let updatedList = [...itemList];
-        updatedList = updatedList.filter((itemList) => {
-            return String(itemList.name).toLowerCase().includes(String(query).toLowerCase());
-        });
+        let updatedList, query = e;
+        if (e === '') {
+            updatedList = itemList;
+            setIsSearching({ ...isSearching, active: false, value: query });
+        } else {
+            updatedList = itemList.filter((itemList) => {
+                return String(itemList.name).toLowerCase().includes(String(query).toLowerCase());
+            });
+            setIsSearching({ ...isSearching, active: true, value: query });
+        }
         setFilteredList(updatedList);
     };
+    const textMax = 50
+    const _filteredItems = (item) => {
+        let searchedkey = String(isSearching.value).toLowerCase();
+        let name = String(item.name);
+        let Txt = name.toLowerCase().indexOf(searchedkey);
+        return <React.Fragment>
+            <Text style={[item.Id === searchManagement.activeId ? style.TextValueActive : style.TextValue]} >
+                {Txt !== 0 && (name.substring(0, Txt))}
+                <Text style={[item.Id === searchManagement.activeId ? style.TextValueActive : style.TextValue, { color: item.Id === searchManagement.activeId ? "#fff" : "tomato" }]} >{name.substring(Txt, (Txt + searchedkey.length))}</Text>
+                {(Txt + searchedkey.length) !== name.length && (name.substring((Txt + searchedkey.length), name.length))}
+            </Text>
+        </React.Fragment>
+
+
+    }
+    const AutoRow = ({ item }) => {
+        return (
+            <TouchableOpacity onPress={() => setManagement({ ...searchManagement, activeId: item.Id })}>
+                <View style={style.filtetValue_con}>
+                    <View style={style.filtetValue_inner} >
+                        {item.imageURL === "" || item.imageURL === null ? (
+                            <View style={style.songsIma}>
+                                <Icon name={"music"} size={30} color={item.Id === searchManagement.activeId ? "tomato" : "#ffff"} />
+                            </View>
+                        ) : (
+                            <View>
+                                <ImageBackground style={{ ...style.songsImaNO, width: 50, height: 50 }} resizeMode='cover' source={{ uri: item.imageURL }} >
+                                    <PlayIcon name={"play"} size={20} color={item.Id === searchManagement.activeId ? "tomato" : "#fff"} />
+                                </ImageBackground>
+                            </View>
+                        )}
+
+                        <View style={style.Sn_dis}>
+                            {(isSearching.active === false) ? <Text style={item.Id === searchManagement.activeId ? style.TextValueActive : style.TextValue} >{item.name}</Text> : _filteredItems(item)}
+                            <Text style={style.disN}>{item.desc.length > textMax ? ((String(item.desc).substring(0, textMax - 3)) + "...") : item.desc}</Text>
+                        </View>
+                    </View>
+                </View>
+            </TouchableOpacity>
+        )
+    }
 
     return (
         <View style={style.Home_con}>
             <View style={style.header}>
-                <TextInput
-                    placeholder='Search Your Songs'
-                    placeholderTextColor={"#848484"}
-                    selectionColor={"tomato"}
-                    autoFocus={true}
-                    onChangeText={filterbySearch}
-                    style={style.input} />
-                <View style={style.CenBotton}>
-                    <TouchableOpacity onPress={() => navigation.navigate("Home")}>
-                        <Text style={style.text}>Cancel</Text>
-                    </TouchableOpacity>
+                <View style={style.searchBar}>
+                    <TextInput
+                        placeholder='Search Your Songs'
+                        placeholderTextColor={"#848484"}
+                        selectionColor={"tomato"}
+                        autoFocus={true}
+                        onChangeText={filterbySearch}
+                        style={style.input} />
+                    <View style={style.CenBotton}>
+                        <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+                            <Text style={style.text}>Cancel</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
+
             </View>
             <View style={style.search_body}>
-                <ScrollView>
-                    {filteredList.map((item, i) => (
-                        <TouchableOpacity onPress={() => setManagement({ ...searchManagement, activeId: item.id })}>
-                            <View key={i} style={style.filtetValue_con}>
-                                <View style={style.filtetValue_inner} >
-                                    <Icon name={"music"} size={30} color={item.id === searchManagement.activeId ? "tomato" : "#ffff"} />
-                                    <Text style={item.id === searchManagement.activeId ? style.TextValueActive : style.TextValue} >{item.name}</Text>
-                                </View>
-                            </View>
-                        </TouchableOpacity>
-                    ))}
-                </ScrollView>
-             
+                <SafeAreaView>
+                    <FlatList
+                        data={filteredList}
+                        renderItem={({ item }) => <AutoRow item={item} />}
+                        key={item => item.Id}
+                    />
+                </SafeAreaView>
+
             </View>
-            
+
         </View>
 
     )
@@ -91,29 +110,34 @@ const style = StyleSheet.create({
     header: {
         borderBottomWidth: 1,
         borderBottomColor: "#313131",
-        height: 50,
+        height: 100,
         backgroundColor: "#000",
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        padding: 5,
+        padding: 10,
+    },
+    searchBar: {
+        borderWidth: 1,
+        borderColor: "#313131",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        width: 380,
+        borderRadius: 20,
+        padding:3
     },
     input: {
         width: 250,
-        borderWidth: 1,
-        borderColor: "#000",
         fontSize: 13,
         padding: 5,
         color: "#fff"
     },
     CenBotton: {
-        borderWidth: 1,
-        borderColor: "#000",
         width: "auto",
-        padding: 5,
+        padding: 10,
     },
     text: {
-        fontSize: 15,
+        fontSize: 14,
         color: "tomato"
     },
     search_body: {
@@ -140,17 +164,48 @@ const style = StyleSheet.create({
     },
     TextValue: {
         color: "#fff",
-        fontSize: 13
+        fontSize: 13,
+        padding: 0,
+        margin: 0
     },
     TextValueActive: {
         color: "tomato",
-        fontSize: 13
+        fontSize: 13,
+        padding: 0,
+        margin: 0
     },
     img: {
         width: 50,
         height: 50
+    },
+    Sn_dis: {
+        width: 300,
+        flexDirection: "column",
+        justifyContent: "flex-start",
+    },
+    disN: {
+        color: "#5e5b56",
+        fontSize: 11,
+        padding: 0,
+        margin: 0
+    },
+    songsIma: {
+        height: 40,
+        width: 40,
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#939997",
+        borderRadius: 10
+    },
+    songsImaNO: {
+        height: 40,
+        width: 40,
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 10
     }
-
 })
 
 export default Search
