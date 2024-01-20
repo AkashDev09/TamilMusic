@@ -38,7 +38,7 @@ const Home = ({ navigation }) => {
             <ScrollView>
                 <View style={styles.collections_home} >
                     {collection_Data.map((x, i) => (
-                        <View key={i} style={{ ...styles.collections, backgroundColor: x.BG_color }}>
+                        <View key={i} style={{ ...styles.collections, backgroundColor: x.BG_color }}> 
                             {x.Icon}
                             <Text style={styles.collections_text}>{x.text}</Text>
                         </View>

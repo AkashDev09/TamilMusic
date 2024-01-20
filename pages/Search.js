@@ -1,23 +1,27 @@
 import React, { useState } from 'react'
-import { FlatList, ImageBackground, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { FlatList, ImageBackground, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import Icon from 'react-native-vector-icons/Feather';
 import PlayIcon from 'react-native-vector-icons/AntDesign';
-import SongsList from "../pages/Data/Songs.json"
+import { useDispatch, useSelector } from 'react-redux';
+import { SelectItem } from '../Store/action';
+import { useRoute } from '@react-navigation/native';
 
 function Search({ navigation }) {
 
-    const itemList = SongsList.station.map((x, i) => ({ ...x, Id: i + 1 }))
-    const [filteredList, setFilteredList] = useState(itemList);
-    const [searchManagement, setManagement] = useState({ activeId: "" });
+    const dispatch = useDispatch();
+    const route = useRoute();
+
+    const { Songs, selectItem } = useSelector((state) => state.reducer);
+    const [filteredList, setFilteredList] = useState(Songs);
     const [isSearching, setIsSearching] = React.useState({ value: "", active: false });
 
     const filterbySearch = (e) => {
         let updatedList, query = e;
         if (e === '') {
-            updatedList = itemList;
+            updatedList = Songs;
             setIsSearching({ ...isSearching, active: false, value: query });
         } else {
-            updatedList = itemList.filter((itemList) => {
+            updatedList = Songs.filter((itemList) => {
                 return String(itemList.name).toLowerCase().includes(String(query).toLowerCase());
             });
             setIsSearching({ ...isSearching, active: true, value: query });
@@ -30,34 +34,33 @@ function Search({ navigation }) {
         let name = String(item.name);
         let Txt = name.toLowerCase().indexOf(searchedkey);
         return <React.Fragment>
-            <Text style={[item.Id === searchManagement.activeId ? style.TextValueActive : style.TextValue]} >
+            <Text style={[item.Id === selectItem?.songs?.Id ? style.TextValueActive : style.TextValue]} >
                 {Txt !== 0 && (name.substring(0, Txt))}
-                <Text style={[item.Id === searchManagement.activeId ? style.TextValueActive : style.TextValue, { color: item.Id === searchManagement.activeId ? "#fff" : "tomato" }]} >{name.substring(Txt, (Txt + searchedkey.length))}</Text>
+                <Text style={[item.Id === selectItem?.songs?.Id ? style.TextValueActive : style.TextValue, { color: item.Id === selectItem?.songs?.Id ? "#fff" : "tomato" }]} >{name.substring(Txt, (Txt + searchedkey.length))}</Text>
                 {(Txt + searchedkey.length) !== name.length && (name.substring((Txt + searchedkey.length), name.length))}
             </Text>
         </React.Fragment>
-
-
     }
+
     const AutoRow = ({ item }) => {
         return (
-            <TouchableOpacity onPress={() => setManagement({ ...searchManagement, activeId: item.Id })}>
+            <TouchableOpacity onPress={() => { dispatch(SelectItem({ songs: item, RouterN: route.name })); navigation.navigate("Player"); }}>
                 <View style={style.filtetValue_con}>
                     <View style={style.filtetValue_inner} >
                         {item.imageURL === "" || item.imageURL === null ? (
                             <View style={style.songsIma}>
-                                <Icon name={"music"} size={30} color={item.Id === searchManagement.activeId ? "tomato" : "#ffff"} />
+                                <Icon name={"music"} size={30} color={item.Id === selectItem?.songs?.Id ? "tomato" : "#ffff"} />
                             </View>
                         ) : (
-                            <View>
-                                <ImageBackground style={{ ...style.songsImaNO, width: 50, height: 50 }} resizeMode='cover' source={{ uri: item.imageURL }} >
-                                    <PlayIcon name={"play"} size={20} color={item.Id === searchManagement.activeId ? "tomato" : "#fff"} />
+                            <View >
+                                <ImageBackground style={{ ...style.songsImaNO, width: 50, height: 50, }} imageStyle={{ borderRadius: 10 }} resizeMode='cover' source={{ uri: item.imageURL }} >
+                                    <PlayIcon name={"play"} size={20} color={item.Id === selectItem?.songs?.Id ? "tomato" : "#fff"} />
                                 </ImageBackground>
                             </View>
                         )}
 
                         <View style={style.Sn_dis}>
-                            {(isSearching.active === false) ? <Text style={item.Id === searchManagement.activeId ? style.TextValueActive : style.TextValue} >{item.name}</Text> : _filteredItems(item)}
+                            {(isSearching.active === false) ? <Text style={item.Id === selectItem?.songs?.Id ? style.TextValueActive : style.TextValue} >{item.name}</Text> : _filteredItems(item)}
                             <Text style={style.disN}>{item.desc.length > textMax ? ((String(item.desc).substring(0, textMax - 3)) + "...") : item.desc}</Text>
                         </View>
                     </View>
@@ -124,7 +127,7 @@ const style = StyleSheet.create({
         justifyContent: "space-between",
         width: 380,
         borderRadius: 20,
-        padding:3
+        padding: 3
     },
     input: {
         width: 250,
