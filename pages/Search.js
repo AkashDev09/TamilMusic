@@ -107,7 +107,7 @@ function Search({ navigation }) {
                         placeholder='Search Your Songs'
                         placeholderTextColor={"#848484"}
                         selectionColor={"tomato"}
-                        autoFocus={true}
+                        autoFocus={Object.values(selectItem).length === 0 ? true : false}
                         onChangeText={filterbySearch}
                         style={style.input} />
                     <View style={style.CenBotton}>
