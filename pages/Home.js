@@ -38,7 +38,7 @@ const Home = ({ navigation }) => {
             <ScrollView>
                 <View style={styles.collections_home} >
                     {collection_Data.map((x, i) => (
-                        <View key={i} style={{ ...styles.collections, backgroundColor: x.BG_color }}> 
+                        <View key={i} style={{ ...styles.collections, backgroundColor: x.BG_color }}>
                             {x.Icon}
                             <Text style={styles.collections_text}>{x.text}</Text>
                         </View>
@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
     Home_con: {
         width: "100%",
         height: "auto",
+        flex: 1,
         backgroundColor: "#fff"
     },
     header: {
@@ -70,7 +71,7 @@ const styles = StyleSheet.create({
         color: "tomato"
     },
     collections_home: {
-        height: 680,
+        height: 805,
         flexDirection: "column",
         justifyContent: "space-around",
         alignItems: "center",

@@ -1,38 +1,29 @@
-package com.tamilmusic
+package com.tamilmusic.Modules
 
-import android.media.MediaPlayer
+import android.util.Log
+import com.facebook.react.ReactPackage
+import com.facebook.react.bridge.Callback
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.tamilmusic.utils.MyFiles
-import java.io.IOException
 
-class MyModules(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext)  {
-    private var mediaPlayer: MediaPlayer? = null
+class MyAudioFile internal constructor(private val reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
+    private val mp3FileScanner = MyFiles(reactContext);
 
     override fun getName(): String {
-        return "AudioPlayerModule"
+        return "MyFileAccess"
     }
 
     @ReactMethod
-    fun getAllAudio(): List<String>{
-        val mp3FileScanner = MyFiles(reactContext)
+    fun getAllAudio(callback: Callback){
+        Log.d("MP3FileScanner", "MP3 File:")
         val mp3Files = mp3FileScanner.getAllMP3Files()
 
-        for (mp3File in mp3Files) {
-            Log.d("MP3FileScanner", "MP3 File: $mp3File")
-        }
-        return  mp3Files;
+//        for (mp3File in mp3Files) {
+//            Log.d("MP3FileScanner", "MP3 File: $mp3File")
+//        }
+        callback(mp3Files.toString());
     }
 
-    @ReactMethod
-    fun stopAudio() {
-        mediaPlayer?.let {
-            if (it.isPlaying) {
-                it.stop()
-            }
-            it.release()
-        }
-        mediaPlayer = null
-    }
 }

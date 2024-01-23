@@ -24,6 +24,8 @@ class MainApplication : Application(), ReactApplication {
               // add(MyReactNativePackage()),
                  VectorIconsPackage()
                  RNFSPackage()
+                 add(MyModules())
+
                 //  MainReactPackage()
             }
 

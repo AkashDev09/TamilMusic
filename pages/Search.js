@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { FlatList, ImageBackground, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { FlatList, ImageBackground, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, NativeModules } from 'react-native'
 import Icon from 'react-native-vector-icons/Feather';
 import PlayIcon from 'react-native-vector-icons/AntDesign';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,17 +11,17 @@ function Search({ navigation }) {
     const dispatch = useDispatch();
     const route = useRoute();
 
-    const { Songs, selectItem } = useSelector((state) => state.reducer);
-    const [filteredList, setFilteredList] = useState(Songs);
+    const { selectItem } = useSelector((state) => state.reducer);
+    const [filteredList, setFilteredList] = useState([]);
     const [isSearching, setIsSearching] = React.useState({ value: "", active: false });
 
     const filterbySearch = (e) => {
         let updatedList, query = e;
         if (e === '') {
-            updatedList = Songs;
+            updatedList = filteredList;
             setIsSearching({ ...isSearching, active: false, value: query });
         } else {
-            updatedList = Songs.filter((itemList) => {
+            updatedList = filteredList.filter((itemList) => {
                 return String(itemList.name).toLowerCase().includes(String(query).toLowerCase());
             });
             setIsSearching({ ...isSearching, active: true, value: query });
@@ -41,7 +41,6 @@ function Search({ navigation }) {
             </Text>
         </React.Fragment>
     }
-
     const AutoRow = ({ item }) => {
         return (
             <TouchableOpacity onPress={() => { dispatch(SelectItem({ songs: item, RouterN: route.name })); navigation.navigate("Player"); }}>
@@ -68,6 +67,37 @@ function Search({ navigation }) {
             </TouchableOpacity>
         )
     }
+    const _getAllAudios = async () => {
+        const data = NativeModules.MyFileAccess.getAllAudio((list) => {
+            const fList = String(`1__${list}__1`).split(', ');
+            fList[0] = fList[0].replace('1__[', '');
+            fList[(fList.length - 1)] = fList[(fList.length - 1)].replace(']__1', '');
+
+            Createlist(fList)
+
+        });
+    }
+
+    function Createlist(SongsList) {
+        let Ayy = []
+        for (let index = 0; index < SongsList.length; index++) {
+            let ob = {}
+            const element = SongsList[index];
+            let frist = String(element).split("/")
+            let sen = frist[frist.length - 1].split(".")[0]
+            ob["name"] = sen;
+            ob["streamURL"] = element;
+            ob["imageURL"] = ""
+            ob["Id"] = index + 1
+            ob["desc"] = "Unkown Artist"
+            Ayy.push(ob)
+        }
+        setFilteredList(Ayy);
+        return Ayy
+    }
+    React.useEffect(() => {
+        _getAllAudios()
+    }, [])
 
     return (
         <View style={style.Home_con}>
@@ -144,7 +174,7 @@ const style = StyleSheet.create({
         color: "tomato"
     },
     search_body: {
-        height: 730,
+        height: 805,
         backgroundColor: "#000",
 
     },
