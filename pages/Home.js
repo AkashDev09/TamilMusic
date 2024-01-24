@@ -71,7 +71,8 @@ const styles = StyleSheet.create({
         color: "tomato"
     },
     collections_home: {
-        height: 805,
+        height: 678,
+        flex: 1,
         flexDirection: "column",
         justifyContent: "space-around",
         alignItems: "center",
