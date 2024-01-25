@@ -1,10 +1,7 @@
-import { INCREMENTVALUE } from "./actionType";
-import Songs from "../pages/Data/Songs.json"
-
+import { INCREMENTVALUE, SONGSVALUE } from "./actionType";
 const intitalState = {
-    Songs: Songs.station.map((x, i) => ({ ...x, Id: i + 1 })),
+    Songs: [],
     selectItem: {}
-
 }
 
 
@@ -16,8 +13,16 @@ function reducer(state = intitalState, action) {
                 ...state,
                 selectItem: { ...action.payload }
             };
+            break;
+        case SONGSVALUE:
+            state = {
+                ...state,
+                Songs: action.payload
+            };
         default:
-            return state
+            state = { ...state };
+            break;
     }
-}
+    return state;
+};
 export default reducer;

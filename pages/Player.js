@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import Icon from "react-native-vector-icons/Entypo"
 import ControllerIcons from "react-native-vector-icons/AntDesign"
@@ -10,11 +10,11 @@ import { Player as RPlayer } from '@react-native-community/audio-toolkit'
 
 function Player({ navigation }) {
 
-    const [plays, setPlays] = React.useState(new RPlayer("sample.mp3"));
+    const [plays, setPlays] = React.useState(new RPlayer());
     const [playing, setIsPlaying] = React.useState(false);
     const [duration, setDuration] = React.useState(0);
     const [cT, setCT] = React.useState(0);
-    const { selectItem } = useSelector((state) => state.reducer);
+    const { selectItem, Songs } = useSelector((state) => state.reducer);
     const myIcon = <Icon name="chevron-thin-left" size={20} color="tomato" />;
 
     let Icons = [
@@ -34,11 +34,17 @@ function Player({ navigation }) {
                 if (plays.isPlaying) {
                     plays.pause();
                     setIsPlaying(false);
-                } else {
+                } else if (selectItem.play === true && plays.isPlaying === false) {
                     plays.play();
                     setIsPlaying(true);
+                    setTimeout(() => _getDuration(), 100);
                 }
-                setTimeout(()=> _getDuration(), 100);
+                //  else {
+                //     plays.play();
+                //     setIsPlaying(true);
+                //     setTimeout(() => _getDuration(), 100);
+                // }
+
             },
             size: 45,
             color: "tomato"
@@ -54,22 +60,25 @@ function Player({ navigation }) {
             color: "#666670"
         }
     ]
-
     function msToMINS(ms) {
-        let s = ms/1000;
+        let s = ms / 1000;
         let seconds = Math.floor(s % 60);
         let minutes = Math.floor(s / 60);
-        return `${minutes}:${seconds}`;
+        return `${minutes >= 10 ? minutes : "0" + minutes}:${seconds >= 10 ? seconds : "0" + seconds}`;
     }
-
     const _getDuration = () => {
         setDuration(plays.duration);
-        setInterval(()=>{
+        setInterval(() => {
             setCT(plays.currentTime)
-        },1000)
+        }, 1000)
     }
-
-
+    console.log(duration, cT, plays.isPlaying)
+    useEffect(() => {
+        setPlays(new RPlayer(selectItem?.songs?.streamURL))
+        if (Object.keys(selectItem).length > 0) {
+            plays.destroy()
+        }
+    }, [selectItem])
     return (
         <View style={styles.Player_con}>
             <View style={styles.header}>
@@ -83,14 +92,18 @@ function Player({ navigation }) {
                     <ImageBackground style={styles.playerCard} imageStyle={{ borderRadius: 20 }} resizeMode='cover' source={require("../Assets/Images/Cassette.jpg")} >
                     </ImageBackground>
                     <View style={styles.SongTittel}>
-                        <Text style={styles.songNameTittel}>A.R. Rahman Radio Tamil</Text>
-                        <Text style={styles.songNameDesc}>Musically connecting Bengalis across the globe. Radio BongOnet </Text>
+                        <Text style={styles.songNameTittel}>{selectItem?.songs?.name}</Text>
+                        <Text style={styles.songNameDesc}>{selectItem?.songs?.desc}</Text>
                     </View>
                 </View>
                 <View style={styles.controller}>
                     <View style={styles.controllerRunner}>
+                        <View style={styles.controllerTime}>
+                            <Text style={{ color: "#666670" }}>{(playing && (cT > 0)) ? (msToMINS(cT)) : "--:--"}</Text>
+                            <Text style={{ color: "#666670" }}>{(playing && (duration > 0)) ? (msToMINS(duration)) : "--:--"}</Text>
+                        </View>
                         <Slider
-                            value={30}
+                            value={cT}
                             minimumValue={0}
                             maximumValue={duration}
                             minimumTrackTintColor={'tomato'}
@@ -109,7 +122,7 @@ function Player({ navigation }) {
                             </View>
                         ))}
                     </View>
-                    <Text>{(playing && (duration > 0)) && (msToMINS(cT))}</Text>
+
                 </View>
             </View>
         </View>
@@ -117,22 +130,21 @@ function Player({ navigation }) {
 }
 const styles = StyleSheet.create({
     Player_con: {
-        width: "100%",
-        height: "auto",
+        flex: 1,
         backgroundColor: "#fff"
     },
     header: {
         borderBottomWidth: 0.5,
         borderBottomColor: "#313131",
         height: 50,
-        backgroundColor: "#dee0f7",
+        backgroundColor: "#000",
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
         padding: 10
     },
     search_body: {
-        height: 705,
+        flex: 1,
         backgroundColor: "#dee0f7",
         flexDirection: "column",
         justifyContent: "space-around",
@@ -146,7 +158,6 @@ const styles = StyleSheet.create({
     },
     SongTittel: {
         width: 300,
-        height: "auto",
         gap: 8,
         padding: 5
     },
@@ -157,6 +168,7 @@ const styles = StyleSheet.create({
     },
     songNameDesc: {
         fontSize: 12,
+        color: "#666670"
     },
     controller: {
         width: 360,
@@ -172,13 +184,22 @@ const styles = StyleSheet.create({
         // borderColor: "#000",
         // borderWidth: 1,
         width: 340,
-        height: 35
+        height: 45,
+    },
+    controllerTime: {
+        // borderColor: "#000",
+        // borderWidth: 1,
+        width: 340,
+        height: 35,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center"
     },
     controllerIcon: {
         // borderColor: "#000",
         // borderWidth: 1,
         width: 340,
-        height: "auto",
+        height: 105,
         flexDirection: "row",
         justifyContent: "space-around",
         alignItems: "center"

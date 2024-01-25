@@ -1,1 +1,3 @@
-export const INCREMENTVALUE = "incermentvalue"
+export const INCREMENTVALUE = "INCREMENTVALUE"
+export const SONGSVALUE = "SONGSVALUE"
+

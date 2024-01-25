@@ -1,12 +1,17 @@
 import React from 'react';
-import { Image, ImageBackground, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, NativeModules } from 'react-native';
 import Icon from "react-native-vector-icons/AntDesign"
 import Fav from "react-native-vector-icons/MaterialIcons"
 import Pla from "react-native-vector-icons/SimpleLineIcons"
 import Re from "react-native-vector-icons/MaterialCommunityIcons"
+import { useDispatch } from 'react-redux';
+import { SongsLists } from '../Store/action';
+
 
 
 const Home = ({ navigation }) => {
+    const dispatch = useDispatch();
+
     const myIcon = <Icon name="search1" size={20} color="tomato" />;
 
     const collection_Data = [
@@ -27,6 +32,38 @@ const Home = ({ navigation }) => {
         }
     ]
 
+    const _getAllAudios = async () => {
+        const data = NativeModules.MyFileAccess.getAllAudio((list) => {
+            const fList = String(`1__${list}__1`).split(', ');
+            fList[0] = fList[0].replace('1__[', '');
+            fList[(fList.length - 1)] = fList[(fList.length - 1)].replace(']__1', '');
+
+            Createlist(fList)
+
+        });
+    }
+
+    function Createlist(SongsList) {
+        let Ayy = []
+        for (let index = 0; index < SongsList.length; index++) {
+            let ob = {}
+            const element = SongsList[index];
+            let frist = String(element).split("/")
+            let sen = frist[frist.length - 1].split(".")[0]
+            ob["name"] = sen;
+            ob["streamURL"] = element;
+            ob["imageURL"] = ""
+            ob["Id"] = index + 1
+            ob["desc"] = "Unkown Artist"
+            Ayy.push(ob)
+        }
+        dispatch(SongsLists(Ayy));
+        return Ayy
+    }
+    React.useEffect(() => {
+        _getAllAudios()
+    }, [])
+
     return (
         <View style={styles.Home_con}>
             <View style={styles.header}>
@@ -35,23 +72,19 @@ const Home = ({ navigation }) => {
                     {myIcon}
                 </TouchableOpacity>
             </View>
-            <ScrollView>
-                <View style={styles.collections_home} >
-                    {collection_Data.map((x, i) => (
-                        <View key={i} style={{ ...styles.collections, backgroundColor: x.BG_color }}>
-                            {x.Icon}
-                            <Text style={styles.collections_text}>{x.text}</Text>
-                        </View>
-                    ))}
-                </View>
-            </ScrollView>
+            <View style={styles.collections_home} >
+                {collection_Data.map((x, i) => (
+                    <View key={i} style={{ ...styles.collections, backgroundColor: x.BG_color }}>
+                        {x.Icon}
+                        <Text style={styles.collections_text}>{x.text}</Text>
+                    </View>
+                ))}
+            </View>
         </View>
     );
 };
 const styles = StyleSheet.create({
     Home_con: {
-        width: "100%",
-        height: "auto",
         flex: 1,
         backgroundColor: "#fff"
     },
@@ -63,18 +96,18 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        padding: 5
+        padding: 10
     },
     header_tittel: {
-        fontSize: 15,
-        fontWeight: "300",
+        fontSize: 20,
+        fontWeight: "400",
         color: "tomato"
     },
     collections_home: {
-        height: 678,
         flex: 1,
         flexDirection: "column",
         justifyContent: "space-around",
+
         alignItems: "center",
         backgroundColor: "#000",
         overflow: "scroll"

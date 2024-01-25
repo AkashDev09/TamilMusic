@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { FlatList, ImageBackground, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, NativeModules } from 'react-native'
+import { FlatList, ImageBackground, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native'
 import Icon from 'react-native-vector-icons/Feather';
 import PlayIcon from 'react-native-vector-icons/AntDesign';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,19 +9,20 @@ import { useRoute } from '@react-navigation/native';
 function Search({ navigation }) {
 
     const dispatch = useDispatch();
+
     const route = useRoute();
 
-    const { selectItem } = useSelector((state) => state.reducer);
-    const [filteredList, setFilteredList] = useState([]);
+    const { selectItem, Songs } = useSelector((state) => state.reducer);
+    const [filteredList, setFilteredList] = useState(Songs);
     const [isSearching, setIsSearching] = React.useState({ value: "", active: false });
 
     const filterbySearch = (e) => {
         let updatedList, query = e;
         if (e === '') {
-            updatedList = filteredList;
+            updatedList = Songs;
             setIsSearching({ ...isSearching, active: false, value: query });
         } else {
-            updatedList = filteredList.filter((itemList) => {
+            updatedList = Songs.filter((itemList) => {
                 return String(itemList.name).toLowerCase().includes(String(query).toLowerCase());
             });
             setIsSearching({ ...isSearching, active: true, value: query });
@@ -43,7 +44,7 @@ function Search({ navigation }) {
     }
     const AutoRow = ({ item }) => {
         return (
-            <TouchableOpacity onPress={() => { dispatch(SelectItem({ songs: item, RouterN: route.name })); navigation.navigate("Player"); }}>
+            <TouchableOpacity onPress={() => { dispatch(SelectItem({ songs: item, RouterN: route.name, play: true })); navigation.navigate("Player"); }}>
                 <View style={style.filtetValue_con}>
                     <View style={style.filtetValue_inner} >
                         {item.imageURL === "" || item.imageURL === null ? (
@@ -67,37 +68,7 @@ function Search({ navigation }) {
             </TouchableOpacity>
         )
     }
-    const _getAllAudios = async () => {
-        const data = NativeModules.MyFileAccess.getAllAudio((list) => {
-            const fList = String(`1__${list}__1`).split(', ');
-            fList[0] = fList[0].replace('1__[', '');
-            fList[(fList.length - 1)] = fList[(fList.length - 1)].replace(']__1', '');
 
-            Createlist(fList)
-
-        });
-    }
-
-    function Createlist(SongsList) {
-        let Ayy = []
-        for (let index = 0; index < SongsList.length; index++) {
-            let ob = {}
-            const element = SongsList[index];
-            let frist = String(element).split("/")
-            let sen = frist[frist.length - 1].split(".")[0]
-            ob["name"] = sen;
-            ob["streamURL"] = element;
-            ob["imageURL"] = ""
-            ob["Id"] = index + 1
-            ob["desc"] = "Unkown Artist"
-            Ayy.push(ob)
-        }
-        setFilteredList(Ayy);
-        return Ayy
-    }
-    React.useEffect(() => {
-        _getAllAudios()
-    }, [])
 
     return (
         <View style={style.Home_con}>
@@ -137,7 +108,7 @@ function Search({ navigation }) {
 const style = StyleSheet.create({
     Home_con: {
         width: "100%",
-        height: "auto",
+        flex: 1,
         backgroundColor: "#fff"
     },
     header: {
@@ -146,7 +117,7 @@ const style = StyleSheet.create({
         height: 100,
         backgroundColor: "#000",
         flexDirection: "row",
-        justifyContent: "space-between",
+        justifyContent: "center",
         alignItems: "center",
         padding: 10,
     },
