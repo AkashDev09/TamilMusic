@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import Icon from "react-native-vector-icons/Entypo"
 import ControllerIcons from "react-native-vector-icons/AntDesign"
@@ -14,6 +14,8 @@ function Player({ navigation }) {
     const [playing, setIsPlaying] = React.useState(false);
     const [duration, setDuration] = React.useState(0);
     const [cT, setCT] = React.useState(0);
+    const [intervalId, setIntervalId] = useState(null);
+
     const { selectItem, Songs } = useSelector((state) => state.reducer);
     const myIcon = <Icon name="chevron-thin-left" size={20} color="tomato" />;
 
@@ -34,17 +36,14 @@ function Player({ navigation }) {
                 if (plays.isPlaying) {
                     plays.pause();
                     setIsPlaying(false);
-                } else if (selectItem.play === true && plays.isPlaying === false) {
+                    clearInterval(intervalId)
+                } else  {
                     plays.play();
                     setIsPlaying(true);
                     setTimeout(() => _getDuration(), 100);
+                    const newIntervalId = setInterval(() => setCT(plays.currentTime), 1000);
+                    setIntervalId(newIntervalId);
                 }
-                //  else {
-                //     plays.play();
-                //     setIsPlaying(true);
-                //     setTimeout(() => _getDuration(), 100);
-                // }
-
             },
             size: 45,
             color: "tomato"
@@ -60,6 +59,7 @@ function Player({ navigation }) {
             color: "#666670"
         }
     ]
+
     function msToMINS(ms) {
         let s = ms / 1000;
         let seconds = Math.floor(s % 60);
@@ -68,17 +68,29 @@ function Player({ navigation }) {
     }
     const _getDuration = () => {
         setDuration(plays.duration);
-        setInterval(() => {
-            setCT(plays.currentTime)
-        }, 1000)
+
     }
-    console.log(duration, cT, plays.isPlaying)
     useEffect(() => {
         setPlays(new RPlayer(selectItem?.songs?.streamURL))
         if (Object.keys(selectItem).length > 0) {
             plays.destroy()
         }
     }, [selectItem])
+
+    const handleChange = (e) => {
+        console.log(e, "e")
+    }
+
+    useEffect(() => {
+        if (cT === -1) {
+            plays.destroy()
+            setIsPlaying(false)
+            setCT(0)
+            setDuration(0)
+            clearInterval(intervalId)
+        }
+    }, [cT]);
+    console.log(cT, duration, "dus")
     return (
         <View style={styles.Player_con}>
             <View style={styles.header}>
@@ -99,8 +111,8 @@ function Player({ navigation }) {
                 <View style={styles.controller}>
                     <View style={styles.controllerRunner}>
                         <View style={styles.controllerTime}>
-                            <Text style={{ color: "#666670" }}>{(playing && (cT > 0)) ? (msToMINS(cT)) : "--:--"}</Text>
-                            <Text style={{ color: "#666670" }}>{(playing && (duration > 0)) ? (msToMINS(duration)) : "--:--"}</Text>
+                            <Text style={{ color: "#666670" }}>{(playing && (cT === -1)) ? "--:--" : (msToMINS(cT))}</Text>
+                            <Text style={{ color: "#666670" }}>{(playing || (duration > 0)) ? (msToMINS(duration)) : "--:--"}</Text>
                         </View>
                         <Slider
                             value={cT}
@@ -110,7 +122,7 @@ function Player({ navigation }) {
                             maximumTrackTintColor={'grey'}
                             thumbTintColor={'tomato'}
                             slideOnTap={true}
-                        // onValueChange={handleChange}
+                            onSlidingComplete={handleChange}
                         />
                     </View>
                     <View style={styles.controllerIcon}>
