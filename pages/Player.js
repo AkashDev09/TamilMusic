@@ -85,7 +85,7 @@ function Player({ navigation }) {
                 const newIntervalId = setInterval(() => setCT(plays.currentTime), 1000);
                 setTimeout(() => setDuration(plays.duration), 1000);
                 setIntervalId(newIntervalId);
-                dispatch(SelectItem({ songs: Songs[nextIndex], RouterN: "search" }))
+                dispatch(SelectItem({ songs: Songs[nextIndex], RouterN: "Search" }))
             }
         },
         {
@@ -109,14 +109,12 @@ function Player({ navigation }) {
             setCT(0);
             setDuration(0);
             clearInterval(intervalId);
-            console.log("ppppp")
         }
     }, [selectItem])
 
     const handleChange = (e) => {
         let SongStartWith = Math.floor(e)
-        // plays.seek(SongStartWith)
-        console.log(SongStartWith, "song")
+        plays.seek(SongStartWith)
     }
 
     useEffect(() => {
