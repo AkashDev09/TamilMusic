@@ -109,11 +109,14 @@ function Player({ navigation }) {
             setCT(0);
             setDuration(0);
             clearInterval(intervalId);
+            console.log("ppppp")
         }
     }, [selectItem])
 
     const handleChange = (e) => {
-        console.log(e, "e")
+        let SongStartWith = Math.floor(e)
+        // plays.seek(SongStartWith)
+        console.log(SongStartWith, "song")
     }
 
     useEffect(() => {
@@ -122,7 +125,7 @@ function Player({ navigation }) {
             setIsPlaying(false);
             setCT(0);
             setDuration(0);
-            clearInterval(intervalId);
+            clearInterval(intervalId)
         }
     }, [cT]);
     console.log(cT, duration, "dus")

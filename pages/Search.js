@@ -44,7 +44,7 @@ function Search({ navigation }) {
     }
     const AutoRow = ({ item }) => {
         return (
-            <TouchableOpacity onPress={() => { dispatch(SelectItem({ songs: item, RouterN: route.name, play: true, destroyPair: item.Id === selectItem?.songs?.Id ? false : true })); navigation.navigate("Player"); }}>
+            <TouchableOpacity onPress={() => { dispatch(SelectItem({ songs: item, RouterN: route.name, play: true, destroyPair: item.Id === selectItem?.songs?.Id ? false : true })); navigation.navigate("player"); }}>
                 <View style={style.filtetValue_con}>
                     <View style={style.filtetValue_inner} >
                         {item.imageURL === "" || item.imageURL === null ? (

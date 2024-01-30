@@ -1,9 +1,8 @@
 import React from 'react'
-import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from "react-native-vector-icons/Feather";
 import MusicStack from './MusicStack';
-import My_Home from './My_Home';
+import Home from '../pages/Home';
 
 
 const Tab = createBottomTabNavigator();
@@ -11,7 +10,7 @@ const Tab = createBottomTabNavigator();
 const Router = [
     {
         name: "Home",
-        component: My_Home
+        component: Home
     },
     {
         name: "Music",
@@ -22,7 +21,6 @@ const Router = [
 function My_Bottom_Tab() {
 
     return (
-        <NavigationContainer>
             <Tab.Navigator
                 initialRouteName='Home'
                 screenOptions={({ route }) => ({
@@ -48,7 +46,6 @@ function My_Bottom_Tab() {
             >
                 {Router.map(x => <Tab.Screen key={x.name} name={x.name} component={x.component} />)}
             </Tab.Navigator>
-        </NavigationContainer>
     )
 }
 
