@@ -3,8 +3,9 @@ import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react
 import Icon from "react-native-vector-icons/Entypo"
 import ControllerIcons from "react-native-vector-icons/AntDesign"
 import { Slider } from '@react-native-assets/slider'
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Player as RPlayer } from '@react-native-community/audio-toolkit'
+import { SelectItem } from '../Store/action'
 
 
 
@@ -19,6 +20,9 @@ function Player({ navigation }) {
     const { selectItem, Songs } = useSelector((state) => state.reducer);
     const myIcon = <Icon name="chevron-thin-left" size={20} color="tomato" />;
 
+    const dispatch = useDispatch();
+
+
     let Icons = [
         {
             IconName: "retweet",
@@ -28,7 +32,23 @@ function Player({ navigation }) {
         {
             IconName: "banckward",
             size: 25,
-            color: "#666670"
+            color: "#666670",
+            onPress: () => {
+                plays.destroy();
+                plays.stop()
+                setIsPlaying(false);
+                setCT(0);
+                setDuration(0);
+                clearInterval(intervalId);
+                const currentIndex = Songs.findIndex(song => song.Id === selectItem.songs.Id);
+                const nextIndex = (currentIndex - 1) % Songs.length;
+                setPlays(new RPlayer(Songs[nextIndex].streamURL));
+                setIsPlaying(true);
+                const newIntervalId = setInterval(() => setCT(plays.currentTime), 1000);
+                setTimeout(() => setDuration(plays.duration), 1000);
+                setIntervalId(newIntervalId);
+                dispatch(SelectItem({ songs: Songs[nextIndex] }))
+            }
         },
         {
             IconName: playing ? "pausecircle" : "play",
@@ -37,11 +57,11 @@ function Player({ navigation }) {
                     plays.pause();
                     setIsPlaying(false);
                     clearInterval(intervalId)
-                } else  {
+                } else {
                     plays.play();
                     setIsPlaying(true);
-                    setTimeout(() => _getDuration(), 100);
                     const newIntervalId = setInterval(() => setCT(plays.currentTime), 1000);
+                    setTimeout(() => setDuration(plays.duration), 1000);
                     setIntervalId(newIntervalId);
                 }
             },
@@ -51,7 +71,22 @@ function Player({ navigation }) {
         {
             IconName: "forward",
             size: 25,
-            color: "#666670"
+            color: "#666670",
+            onPress: () => {
+                plays.destroy();
+                setIsPlaying(false);
+                setCT(0);
+                setDuration(0);
+                clearInterval(intervalId);
+                const currentIndex = Songs.findIndex(song => song.Id === selectItem.songs.Id);
+                const nextIndex = (currentIndex + 1) % Songs.length;
+                setPlays(new RPlayer(Songs[nextIndex].streamURL));
+                setIsPlaying(true);
+                const newIntervalId = setInterval(() => setCT(plays.currentTime), 1000);
+                setTimeout(() => setDuration(plays.duration), 1000);
+                setIntervalId(newIntervalId);
+                dispatch(SelectItem({ songs: Songs[nextIndex], RouterN: "search" }))
+            }
         },
         {
             IconName: "staro",
@@ -59,21 +94,21 @@ function Player({ navigation }) {
             color: "#666670"
         }
     ]
-
     function msToMINS(ms) {
         let s = ms / 1000;
         let seconds = Math.floor(s % 60);
         let minutes = Math.floor(s / 60);
         return `${minutes >= 10 ? minutes : "0" + minutes}:${seconds >= 10 ? seconds : "0" + seconds}`;
     }
-    const _getDuration = () => {
-        setDuration(plays.duration);
 
-    }
     useEffect(() => {
-        setPlays(new RPlayer(selectItem?.songs?.streamURL))
+        setPlays(new RPlayer(selectItem?.songs?.streamURL));
         if (Object.keys(selectItem).length > 0) {
-            plays.destroy()
+            plays.destroy();
+            setIsPlaying(false);
+            setCT(0);
+            setDuration(0);
+            clearInterval(intervalId);
         }
     }, [selectItem])
 
@@ -83,11 +118,11 @@ function Player({ navigation }) {
 
     useEffect(() => {
         if (cT === -1) {
-            plays.destroy()
-            setIsPlaying(false)
-            setCT(0)
-            setDuration(0)
-            clearInterval(intervalId)
+            plays.destroy();
+            setIsPlaying(false);
+            setCT(0);
+            setDuration(0);
+            clearInterval(intervalId);
         }
     }, [cT]);
     console.log(cT, duration, "dus")

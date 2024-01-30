@@ -126,9 +126,9 @@ const style = StyleSheet.create({
         borderColor: "#313131",
         flexDirection: "row",
         justifyContent: "space-between",
-        width: 380,
+        width: 350,
         borderRadius: 20,
-        padding: 3
+        padding: 5
     },
     input: {
         width: 250,

@@ -7,12 +7,13 @@
 
 import React from 'react';
 // import My_Bottom_Tab from './navigation/My_Bottom_Tab';
-import My_stack from './navigation/My_Stack';
+import My_stack from './navigation/My_Home';
 import AudioList from './pages/AudioList';
+import My_Bottom_Tab from './navigation/My_Bottom_Tab';
 
 const App = () => {
   return (
-    <My_stack />
+    <My_Bottom_Tab />
     // <AudioList />
   );
 };

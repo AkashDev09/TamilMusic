@@ -2,48 +2,53 @@ import React from 'react'
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from "react-native-vector-icons/Feather";
-import Home from '../pages/Home';
-import Player from '../pages/Player';
+import MusicStack from './MusicStack';
+import My_Home from './My_Home';
+
 
 const Tab = createBottomTabNavigator();
 
 const Router = [
     {
         name: "Home",
-        component: Home
+        component: My_Home
     },
     {
-        name: "Player",
-        component: Player
-    }
+        name: "Music",
+        component: MusicStack
+    },
+
 ]
 function My_Bottom_Tab() {
+
     return (
-        <Tab.Navigator
-            initialRouteName='Home'
-            screenOptions={({ route }) => ({
-                tabBarIcon: ({ color, size }) => {
-                    const icons = {
-                        Home: 'home',
-                        Player: 'music',
-                    };
-                    return (
-                        <Icon
-                            name={icons[route.name]}
-                            color={color}
-                            size={25}
-                        />
-                    );
-                },
-                tabBarStyle: { backgroundColor: "#000" },
-                tabBarActiveTintColor: 'tomato',
-                tabBarInactiveTintColor: 'gray',
-                // tabBarShowLabel: false,
-                headerShown: false,
-            })}
-        >
-            {Router.map(x => <Tab.Screen key={x.name} name={x.name}  component={x.component} />)}
-        </Tab.Navigator>
+        <NavigationContainer>
+            <Tab.Navigator
+                initialRouteName='Home'
+                screenOptions={({ route }) => ({
+                    tabBarIcon: ({ color, size }) => {
+                        const icons = {
+                            Home: 'home',
+                            Music: 'music',
+                        };
+                        return (
+                            <Icon
+                                name={icons[route.name]}
+                                color={color}
+                                size={25}
+                            />
+                        );
+                    },
+                    tabBarStyle: { backgroundColor: "#000" },
+                    tabBarActiveTintColor: 'tomato',
+                    tabBarInactiveTintColor: 'gray',
+                    // tabBarShowLabel: false,
+                    headerShown: false,
+                })}
+            >
+                {Router.map(x => <Tab.Screen key={x.name} name={x.name} component={x.component} />)}
+            </Tab.Navigator>
+        </NavigationContainer>
     )
 }
 
