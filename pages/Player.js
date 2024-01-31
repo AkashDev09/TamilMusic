@@ -16,6 +16,7 @@ function Player({ navigation }) {
     const [duration, setDuration] = React.useState(0);
     const [cT, setCT] = React.useState(0);
     const [intervalId, setIntervalId] = useState(null);
+    const [autoPlay, setAutoPlay] = useState(false)
 
     const { selectItem, Songs } = useSelector((state) => state.reducer);
     const myIcon = <Icon name="chevron-thin-left" size={20} color="tomato" />;
@@ -35,7 +36,6 @@ function Player({ navigation }) {
             color: "#666670",
             onPress: () => {
                 plays.destroy();
-                plays.stop()
                 setIsPlaying(false);
                 setCT(0);
                 setDuration(0);
@@ -43,11 +43,7 @@ function Player({ navigation }) {
                 const currentIndex = Songs.findIndex(song => song.Id === selectItem.songs.Id);
                 const nextIndex = (currentIndex - 1) % Songs.length;
                 setPlays(new RPlayer(Songs[nextIndex].streamURL));
-                setIsPlaying(true);
-                const newIntervalId = setInterval(() => setCT(plays.currentTime), 1000);
-                setTimeout(() => setDuration(plays.duration), 1000);
-                setIntervalId(newIntervalId);
-                dispatch(SelectItem({ songs: Songs[nextIndex] }))
+                dispatch(SelectItem({ songs: Songs[nextIndex], RouterN: "Search", play: false }))
             }
         },
         {
@@ -81,11 +77,7 @@ function Player({ navigation }) {
                 const currentIndex = Songs.findIndex(song => song.Id === selectItem.songs.Id);
                 const nextIndex = (currentIndex + 1) % Songs.length;
                 setPlays(new RPlayer(Songs[nextIndex].streamURL));
-                setIsPlaying(true);
-                const newIntervalId = setInterval(() => setCT(plays.currentTime), 1000);
-                setTimeout(() => setDuration(plays.duration), 1000);
-                setIntervalId(newIntervalId);
-                dispatch(SelectItem({ songs: Songs[nextIndex], RouterN: "Search" }))
+                dispatch(SelectItem({ songs: Songs[nextIndex], RouterN: "Search", play: false }))
             }
         },
         {
@@ -102,13 +94,22 @@ function Player({ navigation }) {
     }
 
     useEffect(() => {
-        setPlays(new RPlayer(selectItem?.songs?.streamURL));
-        if (Object.keys(selectItem).length > 0) {
-            plays.destroy();
-            setIsPlaying(false);
-            setCT(0);
-            setDuration(0);
-            clearInterval(intervalId);
+        if (selectItem.play === true) {
+            setPlays(new RPlayer(selectItem?.songs?.streamURL));
+            if (Object.keys(selectItem).length > 0 && selectItem.play === true) {
+                plays.destroy();
+                setIsPlaying(false);
+                setCT(0);
+                setDuration(0);
+                clearInterval(intervalId);
+                setAutoPlay(true)
+            }
+        } else {
+            plays.play()
+            setIsPlaying(true);
+            const newIntervalId = setInterval(() => setCT(plays.currentTime), 1000);
+            setTimeout(() => setDuration(plays.duration), 1000);
+            setIntervalId(newIntervalId);
         }
     }, [selectItem])
 
@@ -116,6 +117,17 @@ function Player({ navigation }) {
         let SongStartWith = Math.floor(e)
         plays.seek(SongStartWith)
     }
+
+    useEffect(() => {
+        if (autoPlay === true) {
+            plays.play()
+            setIsPlaying(true);
+            const newIntervalId = setInterval(() => setCT(plays.currentTime), 1000);
+            setTimeout(() => setDuration(plays.duration), 1000);
+            setIntervalId(newIntervalId);
+            setAutoPlay(false);
+        }
+    }, [autoPlay])
 
     useEffect(() => {
         if (cT === -1) {
