@@ -4,7 +4,7 @@ import Icon from "react-native-vector-icons/Entypo"
 import ControllerIcons from "react-native-vector-icons/AntDesign"
 import { Slider } from '@react-native-assets/slider'
 import { useDispatch, useSelector } from 'react-redux';
-import { Player as RPlayer } from '@react-native-community/audio-toolkit'
+import { Player as RPlayer, PlaybackCategories } from '@react-native-community/audio-toolkit'
 import { SelectItem } from '../Store/action'
 
 
@@ -16,14 +16,19 @@ function Player({ navigation }) {
     const [duration, setDuration] = React.useState(0);
     const [cT, setCT] = React.useState(0);
     const [intervalId, setIntervalId] = useState(null);
-    const [autoPlay, setAutoPlay] = useState(false)
+    const [autoPlay, setAutoPlay] = useState(false);
 
     const { selectItem, Songs } = useSelector((state) => state.reducer);
     const myIcon = <Icon name="chevron-thin-left" size={20} color="tomato" />;
 
     const dispatch = useDispatch();
 
-
+    const defaultPlayerOptions = {
+        // autoDestroy: true,
+        continuesToPlayInBackground: true, // Set to true for background playback
+        // category: PlaybackCategories.Playback,
+        // mixWithOthers: false,
+    };
     let Icons = [
         {
             IconName: "retweet",
@@ -42,7 +47,7 @@ function Player({ navigation }) {
                 clearInterval(intervalId);
                 const currentIndex = Songs.findIndex(song => song.Id === selectItem.songs.Id);
                 const nextIndex = (currentIndex - 1) % Songs.length;
-                setPlays(new RPlayer(Songs[nextIndex].streamURL));
+                setPlays(new RPlayer(Songs[nextIndex].streamURL, defaultPlayerOptions));
                 dispatch(SelectItem({ songs: Songs[nextIndex], RouterN: "Search", play: false }))
             }
         },
@@ -76,7 +81,7 @@ function Player({ navigation }) {
                 clearInterval(intervalId);
                 const currentIndex = Songs.findIndex(song => song.Id === selectItem.songs.Id);
                 const nextIndex = (currentIndex + 1) % Songs.length;
-                setPlays(new RPlayer(Songs[nextIndex].streamURL));
+                setPlays(new RPlayer(Songs[nextIndex].streamURL, defaultPlayerOptions));
                 dispatch(SelectItem({ songs: Songs[nextIndex], RouterN: "Search", play: false }))
             }
         },
@@ -95,7 +100,7 @@ function Player({ navigation }) {
 
     useEffect(() => {
         if (selectItem.play === true) {
-            setPlays(new RPlayer(selectItem?.songs?.streamURL));
+            setPlays(new RPlayer(selectItem?.songs?.streamURL, defaultPlayerOptions));
             if (Object.keys(selectItem).length > 0 && selectItem.play === true) {
                 plays.destroy();
                 setIsPlaying(false);
@@ -136,6 +141,11 @@ function Player({ navigation }) {
             setCT(0);
             setDuration(0);
             clearInterval(intervalId)
+            clearInterval(intervalId);
+            const currentIndex = Songs.findIndex(song => song.Id === selectItem.songs.Id);
+            const nextIndex = (currentIndex + 1) % Songs.length;
+            setPlays(new RPlayer(Songs[nextIndex].streamURL, defaultPlayerOptions));
+            dispatch(SelectItem({ songs: Songs[nextIndex], RouterN: "Search", play: false }))
         }
     }, [cT]);
     console.log(cT, duration, "dus")
