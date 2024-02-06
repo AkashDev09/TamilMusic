@@ -10,8 +10,6 @@ function Search({ navigation }) {
 
     const dispatch = useDispatch();
 
-    const route = useRoute();
-
     const { selectItem, Songs } = useSelector((state) => state.reducer);
     const [filteredList, setFilteredList] = useState(Songs);
     const [isSearching, setIsSearching] = React.useState({ value: "", active: false });
@@ -44,7 +42,7 @@ function Search({ navigation }) {
     }
     const AutoRow = ({ item }) => {
         return (
-            <TouchableOpacity onPress={() => { dispatch(SelectItem({ songs: item, RouterN: route.name, play: true, destroyPair: item.Id === selectItem?.songs?.Id ? false : true })); navigation.navigate("Player"); }}>
+            <TouchableOpacity onPress={() => { dispatch(SelectItem({ songs: item, RouterN: "Search", play: true, destroyPair: item.Id === selectItem?.songs?.Id ? false : true })); navigation.navigate("Player"); }}>
                 <View style={style.filtetValue_con}>
                     <View style={style.filtetValue_inner} >
                         {item.imageURL === "" || item.imageURL === null ? (
@@ -95,7 +93,7 @@ function Search({ navigation }) {
                         data={filteredList}
                         renderItem={({ item }) => <AutoRow item={item} />}
                         key={item => item.Id}
-                    />
+                    />              
                 </SafeAreaView>
 
             </View>
