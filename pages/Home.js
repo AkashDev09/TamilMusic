@@ -54,6 +54,7 @@ const Home = ({ navigation }) => {
             ob["streamURL"] = element;
             ob["imageURL"] = ""
             ob["Id"] = index + 1
+            ob["scrollId"] = index
             ob["desc"] = "Unkown Artist"
             Ayy.push(ob)
         }

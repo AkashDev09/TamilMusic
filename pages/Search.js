@@ -1,11 +1,9 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { FlatList, ImageBackground, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native'
 import Icon from 'react-native-vector-icons/Feather';
 import PlayIcon from 'react-native-vector-icons/AntDesign';
 import { useDispatch, useSelector } from 'react-redux';
 import { SelectItem } from '../Store/action';
-import { useRoute } from '@react-navigation/native';
-
 function Search({ navigation }) {
 
     const dispatch = useDispatch();
@@ -13,6 +11,8 @@ function Search({ navigation }) {
     const { selectItem, Songs } = useSelector((state) => state.reducer);
     const [filteredList, setFilteredList] = useState(Songs);
     const [isSearching, setIsSearching] = React.useState({ value: "", active: false });
+
+    const _listRef = useRef();
 
     const filterbySearch = (e) => {
         let updatedList, query = e;
@@ -40,9 +40,9 @@ function Search({ navigation }) {
             </Text>
         </React.Fragment>
     }
-    const AutoRow = ({ item }) => {
+    const AutoRow = ({ item , index}) => {
         return (
-            <TouchableOpacity onPress={() => { dispatch(SelectItem({ songs: item, RouterN: "Search", play: true, destroyPair: item.Id === selectItem?.songs?.Id ? false : true })); navigation.navigate("Player"); }}>
+            <TouchableOpacity onPress={() => { dispatch(SelectItem({ songs: item, RouterN: "Search", play: true, destroyPair: item.Id === selectItem?.songs?.Id ? false : true })); navigation.navigate("Player");  }}>
                 <View style={style.filtetValue_con}>
                     <View style={style.filtetValue_inner} >
                         {item.imageURL === "" || item.imageURL === null ? (
@@ -66,7 +66,15 @@ function Search({ navigation }) {
             </TouchableOpacity>
         )
     }
+    const getItemLayout = (data, index) => {
+        return { length: 80, offset: 80 * index, index }
+    }
 
+    React.useEffect(() => {
+        if(Object.keys(selectItem).length > 0){
+            _listRef.current.scrollToIndex({animated : true, index : selectItem?.songs?.scrollId - 5 });
+        }
+    }, []);
 
     return (
         <View style={style.Home_con}>
@@ -91,9 +99,12 @@ function Search({ navigation }) {
                 <SafeAreaView>
                     <FlatList
                         data={filteredList}
-                        renderItem={({ item }) => <AutoRow item={item} />}
+                        renderItem={AutoRow}
                         key={item => item.Id}
-                    />              
+                        keyExtractor={item => `key-${item.Id}`}
+                        getItemLayout={getItemLayout}
+                        ref={_listRef}
+                    />
                 </SafeAreaView>
 
             </View>
@@ -143,21 +154,20 @@ const style = StyleSheet.create({
         color: "tomato"
     },
     search_body: {
-        height: 805,
         backgroundColor: "#000",
-
     },
     filtetValue_con: {
         borderBottomWidth: 0.5,
         borderColor: "#313131",
-        height: "auto",
+        height: 80,
         paddingTop: 17,
         paddingBottom: 17,
         paddingLeft: 5,
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        gap: 10
+        gap: 10,
+
     },
     filtetValue_inner: {
         flexDirection: "row",
