@@ -23,6 +23,7 @@ function Player({ navigation }) {
 
     const dispatch = useDispatch();
 
+
     const defaultPlayerOptions = {
         // autoDestroy: true,
         continuesToPlayInBackground: true, // Set to true for background playback
@@ -48,7 +49,7 @@ function Player({ navigation }) {
                 const currentIndex = Songs.findIndex(song => song.Id === selectItem.songs.Id);
                 const nextIndex = (currentIndex - 1) % Songs.length;
                 setPlays(new RPlayer(Songs[nextIndex].streamURL, defaultPlayerOptions));
-                dispatch(SelectItem({ songs: Songs[nextIndex], RouterN: "Search", play: false }))
+                dispatch(SelectItem({ songs: Songs[nextIndex], RouterN: "Search", play: false, destroyPair: true }))
             }
         },
         {
@@ -82,7 +83,7 @@ function Player({ navigation }) {
                 const currentIndex = Songs.findIndex(song => song.Id === selectItem.songs.Id);
                 const nextIndex = (currentIndex + 1) % Songs.length;
                 setPlays(new RPlayer(Songs[nextIndex].streamURL, defaultPlayerOptions));
-                dispatch(SelectItem({ songs: Songs[nextIndex], RouterN: "Search", play: false }))
+                dispatch(SelectItem({ songs: Songs[nextIndex], RouterN: "Search", play: false, destroyPair: true }))
             }
         },
         {
@@ -99,7 +100,7 @@ function Player({ navigation }) {
     }
 
     useEffect(() => {
-        if (selectItem.play === true) {
+        if (selectItem.play === true && selectItem?.destroyPair === true) {
             setPlays(new RPlayer(selectItem?.songs?.streamURL, defaultPlayerOptions));
             if (Object.keys(selectItem).length > 0 && selectItem.play === true) {
                 plays.destroy();
@@ -110,11 +111,14 @@ function Player({ navigation }) {
                 setAutoPlay(true)
             }
         } else {
-            plays.play()
-            setIsPlaying(true);
-            const newIntervalId = setInterval(() => setCT(plays.currentTime), 1000);
-            setTimeout(() => setDuration(plays.duration), 1000);
-            setIntervalId(newIntervalId);
+            if (selectItem.play === false && selectItem?.destroyPair === true) {
+                plays.play()
+                setIsPlaying(true);
+                const newIntervalId = setInterval(() => setCT(plays.currentTime), 1000);
+                setTimeout(() => setDuration(plays.duration), 1000);
+                setIntervalId(newIntervalId);
+            }
+
         }
     }, [selectItem])
 

@@ -40,9 +40,9 @@ function Search({ navigation }) {
             </Text>
         </React.Fragment>
     }
-    const AutoRow = ({ item , index}) => {
+    const AutoRow = ({ item, index }) => {
         return (
-            <TouchableOpacity onPress={() => { dispatch(SelectItem({ songs: item, RouterN: "Search", play: true, destroyPair: item.Id === selectItem?.songs?.Id ? false : true })); navigation.navigate("Player");  }}>
+            <TouchableOpacity onPress={() => { dispatch(SelectItem({ songs: item, RouterN: "Search", play: true, destroyPair: item.Id !== selectItem?.songs?.Id ? true : false })); navigation.navigate("Player"); }}>
                 <View style={style.filtetValue_con}>
                     <View style={style.filtetValue_inner} >
                         {item.imageURL === "" || item.imageURL === null ? (
@@ -71,8 +71,8 @@ function Search({ navigation }) {
     }
 
     React.useEffect(() => {
-        if(Object.keys(selectItem).length > 0){
-            _listRef.current.scrollToIndex({animated : true, index : selectItem?.songs?.scrollId - 5 });
+        if (Object.keys(selectItem).length > 0) {
+            _listRef.current.scrollToIndex({ animated: true, index: selectItem?.songs?.scrollId - 5 });
         }
     }, []);
 
