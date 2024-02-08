@@ -1,3 +1,4 @@
 export const INCREMENTVALUE = "INCREMENTVALUE"
 export const SONGSVALUE = "SONGSVALUE"
+export const BOTTOUMPLAY = "BOTTOUMPLAY"
 

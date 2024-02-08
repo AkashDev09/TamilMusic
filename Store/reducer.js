@@ -1,7 +1,8 @@
-import { INCREMENTVALUE, SONGSVALUE } from "./actionType";
+import { BOTTOUMPLAY, INCREMENTVALUE, SONGSVALUE } from "./actionType";
 const intitalState = {
     Songs: [],
-    selectItem: {}
+    selectItem: {},
+    BottomPlayController:""
 }
 
 
@@ -18,6 +19,12 @@ function reducer(state = intitalState, action) {
             state = {
                 ...state,
                 Songs: action.payload
+            };
+            break
+        case BOTTOUMPLAY:
+            state = {
+                ...state,
+                BottomPlayController: action.payload
             };
         default:
             state = { ...state };

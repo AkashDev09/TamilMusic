@@ -1,4 +1,4 @@
-import { INCREMENTVALUE, SONGSVALUE } from "./actionType"
+import { BOTTOUMPLAY, INCREMENTVALUE, SONGSVALUE } from "./actionType"
 
 export const SelectItem = (access) => {
     return {
@@ -10,6 +10,12 @@ export const SelectItem = (access) => {
 export const SongsLists = (access) => {
     return {
         type: SONGSVALUE,
+        payload: access,
+    }
+}
+export const bottomPlay = (access) => {
+    return {
+        type: BOTTOUMPLAY,
         payload: access,
     }
 }

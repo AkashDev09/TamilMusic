@@ -5,7 +5,7 @@ import ControllerIcons from "react-native-vector-icons/AntDesign"
 import { Slider } from '@react-native-assets/slider'
 import { useDispatch, useSelector } from 'react-redux';
 import { Player as RPlayer, PlaybackCategories } from '@react-native-community/audio-toolkit'
-import { SelectItem } from '../Store/action'
+import { SelectItem, bottomPlay } from '../Store/action'
 
 
 
@@ -18,12 +18,12 @@ function Player({ navigation }) {
     const [intervalId, setIntervalId] = useState(null);
     const [autoPlay, setAutoPlay] = useState(false);
 
-    const { selectItem, Songs } = useSelector((state) => state.reducer);
+    const { selectItem, Songs, BottomPlayController } = useSelector((state) => state.reducer);
     const myIcon = <Icon name="chevron-thin-left" size={20} color="tomato" />;
 
     const dispatch = useDispatch();
 
-
+    console.log(BottomPlayController, "BottomPlayController")
     const defaultPlayerOptions = {
         // autoDestroy: true,
         continuesToPlayInBackground: true, // Set to true for background playback
@@ -59,12 +59,14 @@ function Player({ navigation }) {
                     plays.pause();
                     setIsPlaying(false);
                     clearInterval(intervalId)
+                    dispatch(bottomPlay(false))
                 } else {
                     plays.play();
                     setIsPlaying(true);
                     const newIntervalId = setInterval(() => setCT(plays.currentTime), 1000);
                     setTimeout(() => setDuration(plays.duration), 1000);
                     setIntervalId(newIntervalId);
+                    dispatch(bottomPlay(true))
                 }
             },
             size: 45,
@@ -109,6 +111,7 @@ function Player({ navigation }) {
                 setDuration(0);
                 clearInterval(intervalId);
                 setAutoPlay(true)
+                dispatch((bottomPlay(true)))
             }
         } else {
             if (selectItem.play === false && selectItem?.destroyPair === true) {
@@ -117,6 +120,7 @@ function Player({ navigation }) {
                 const newIntervalId = setInterval(() => setCT(plays.currentTime), 1000);
                 setTimeout(() => setDuration(plays.duration), 1000);
                 setIntervalId(newIntervalId);
+                dispatch((bottomPlay(true)))
             }
 
         }
@@ -134,6 +138,7 @@ function Player({ navigation }) {
             const newIntervalId = setInterval(() => setCT(plays.currentTime), 1000);
             setTimeout(() => setDuration(plays.duration), 1000);
             setIntervalId(newIntervalId);
+            dispatch((bottomPlay(true)))
             setAutoPlay(false);
         }
     }, [autoPlay])
@@ -149,17 +154,15 @@ function Player({ navigation }) {
             const currentIndex = Songs.findIndex(song => song.Id === selectItem.songs.Id);
             const nextIndex = (currentIndex + 1) % Songs.length;
             setPlays(new RPlayer(Songs[nextIndex].streamURL, defaultPlayerOptions));
-            dispatch(SelectItem({ songs: Songs[nextIndex], RouterN: "Search", play: false }))
+            dispatch(SelectItem({ songs: Songs[nextIndex], RouterN: "Search", play: false, destroyPair: true }))
         }
     }, [cT]);
-    console.log(cT, duration, "dus")
     return (
         <View style={styles.Player_con}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.navigate(Object.values(selectItem).length === 0 ? "Home" : selectItem?.RouterN)}>
                     {myIcon}
                 </TouchableOpacity>
-                <Text></Text>
             </View>
             <View style={styles.search_body}>
                 <View style={{ padding: 5, gap: 5 }}>

@@ -1,14 +1,18 @@
 import React, { useRef, useState } from 'react'
-import { FlatList, ImageBackground, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native'
+import { Dimensions, FlatList, ImageBackground, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native'
 import Icon from 'react-native-vector-icons/Feather';
 import PlayIcon from 'react-native-vector-icons/AntDesign';
 import { useDispatch, useSelector } from 'react-redux';
-import { SelectItem } from '../Store/action';
+import { SelectItem, bottomPlay } from '../Store/action';
+import BottomPlayer from '../components/BottomPlayer';
+import { useRoute } from '@react-navigation/native';
 function Search({ navigation }) {
 
     const dispatch = useDispatch();
+    const route = useRoute();
 
     const { selectItem, Songs } = useSelector((state) => state.reducer);
+
     const [filteredList, setFilteredList] = useState(Songs);
     const [isSearching, setIsSearching] = React.useState({ value: "", active: false });
 
@@ -72,7 +76,7 @@ function Search({ navigation }) {
 
     React.useEffect(() => {
         if (Object.keys(selectItem).length > 0) {
-            _listRef.current.scrollToIndex({ animated: true, index: selectItem?.songs?.scrollId - 5 });
+            _listRef.current.scrollToIndex({ animated: true, index: selectItem?.songs?.scrollId });
         }
     }, []);
 
@@ -84,7 +88,7 @@ function Search({ navigation }) {
                         placeholder='Search Your Songs'
                         placeholderTextColor={"#848484"}
                         selectionColor={"tomato"}
-                        autoFocus={Object.values(selectItem).length === 0 ? true : false}
+                        autoFocus={Object.values(selectItem).length === 0 && route.name === "Search" ? true : false}
                         onChangeText={filterbySearch}
                         style={style.input} />
                     <View style={style.CenBotton}>
@@ -95,7 +99,7 @@ function Search({ navigation }) {
                 </View>
 
             </View>
-            <View style={style.search_body}>
+            <View style={{ ...style.search_body, height: Object.keys(selectItem) > 0 ? Math.floor(Dimensions.get('window').height * 0.8) : route.name === "Search" ? Math.floor(Dimensions.get('window').height * 0.9) : Math.floor(Dimensions.get('window').height * 0.8) }}>
                 <SafeAreaView>
                     <FlatList
                         data={filteredList}
@@ -106,9 +110,9 @@ function Search({ navigation }) {
                         ref={_listRef}
                     />
                 </SafeAreaView>
-
             </View>
-
+            {Object.keys(selectItem).length > 0 && <BottomPlayer DimensionsFilter={route.name} navigation={navigation} />}
+            {/* <BottomPlayer DimensionsFilter={route.name} /> */}
         </View>
 
     )
@@ -116,19 +120,20 @@ function Search({ navigation }) {
 
 const style = StyleSheet.create({
     Home_con: {
-        width: "100%",
         flex: 1,
-        backgroundColor: "#fff"
+        backgroundColor: "#000",
+        position: "relative"
     },
     header: {
         borderBottomWidth: 1,
         borderBottomColor: "#313131",
-        height: 100,
         backgroundColor: "#000",
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
         padding: 10,
+        width: Math.floor(Dimensions.get('window').width),
+        height: Math.floor(Dimensions.get('window').height * 0.1),
     },
     searchBar: {
         borderWidth: 1,
@@ -155,6 +160,8 @@ const style = StyleSheet.create({
     },
     search_body: {
         backgroundColor: "#000",
+        position: "relative",
+        width: Math.floor(Dimensions.get('window').width),
     },
     filtetValue_con: {
         borderBottomWidth: 0.5,
