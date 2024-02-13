@@ -1,16 +1,26 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, NativeModules } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, NativeModules, Dimensions } from 'react-native';
 import Icon from "react-native-vector-icons/AntDesign"
 import Fav from "react-native-vector-icons/MaterialIcons"
 import Pla from "react-native-vector-icons/SimpleLineIcons"
 import Re from "react-native-vector-icons/MaterialCommunityIcons"
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { SongsLists } from '../Store/action';
+import BottomPlayer from '../components/BottomPlayer';
+import { useRoute } from '@react-navigation/native';
+import { songCompleteForward } from '../utils/playerFunction';
 
 
 
 const Home = ({ navigation }) => {
+
+
     const dispatch = useDispatch();
+
+    const route = useRoute();
+
+    const { selectItem, Songs, interval, isPlaying, duration } = useSelector((state) => state.reducer);
+
 
     const myIcon = <Icon name="search1" size={20} color="tomato" />;
 
@@ -65,6 +75,12 @@ const Home = ({ navigation }) => {
         _getAllAudios()
     }, [])
 
+    React.useEffect(() => {
+        if (interval === -1) {
+            songCompleteForward(selectItem, Songs, dispatch)
+        }
+
+    }, [interval])
     return (
         <View style={styles.Home_con}>
             <View style={styles.header}>
@@ -81,18 +97,22 @@ const Home = ({ navigation }) => {
                     </View>
                 ))}
             </View>
+            <View style={styles.homeBottom}>
+                {Object.keys(selectItem).length > 0 && <BottomPlayer DimensionsFilter={route.name} navigation={navigation} />}
+            </View>
         </View>
     );
 };
 const styles = StyleSheet.create({
     Home_con: {
         flex: 1,
-        backgroundColor: "#fff"
+        backgroundColor: "#000",
     },
     header: {
         borderBottomWidth: 1,
         borderBottomColor: "#313131",
-        height: 50,
+        width: Math.floor(Dimensions.get('window').width),
+        height: Math.floor(Dimensions.get('window').height * 0.1),
         backgroundColor: "#000",
         flexDirection: "row",
         justifyContent: "space-between",
@@ -105,13 +125,13 @@ const styles = StyleSheet.create({
         color: "tomato"
     },
     collections_home: {
-        flex: 1,
         flexDirection: "column",
         justifyContent: "space-around",
-
         alignItems: "center",
         backgroundColor: "#000",
-        overflow: "scroll"
+        overflow: "scroll",
+        width: Math.floor(Dimensions.get('window').width),
+        height: Math.floor(Dimensions.get('window').height * 0.7),
     },
     collections: {
         width: 110,
@@ -127,7 +147,13 @@ const styles = StyleSheet.create({
         fontSize: 15,
         color: "#fff",
         fontWeight: "500"
+    },
+    homeBottom: {
+        width: Math.floor(Dimensions.get('window').width),
+        height: Math.floor(Dimensions.get('window').height * 0.14),
+        position: "relative"
     }
+
 })
 
 export default Home;

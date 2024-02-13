@@ -3,20 +3,23 @@ import { Dimensions, FlatList, ImageBackground, SafeAreaView, StyleSheet, Text, 
 import Icon from 'react-native-vector-icons/Feather';
 import PlayIcon from 'react-native-vector-icons/AntDesign';
 import { useDispatch, useSelector } from 'react-redux';
-import { SelectItem, bottomPlay } from '../Store/action';
+import { SelectItem, } from '../Store/action';
 import BottomPlayer from '../components/BottomPlayer';
 import { useRoute } from '@react-navigation/native';
+import { playsougFunction, songCompleteForward } from '../utils/playerFunction';
+
 function Search({ navigation }) {
 
     const dispatch = useDispatch();
     const route = useRoute();
 
-    const { selectItem, Songs } = useSelector((state) => state.reducer);
+    const { selectItem, Songs, interval, isPlaying, duration } = useSelector((state) => state.reducer);
 
     const [filteredList, setFilteredList] = useState(Songs);
     const [isSearching, setIsSearching] = React.useState({ value: "", active: false });
 
     const _listRef = useRef();
+
 
     const filterbySearch = (e) => {
         let updatedList, query = e;
@@ -31,7 +34,9 @@ function Search({ navigation }) {
         }
         setFilteredList(updatedList);
     };
+
     const textMax = 50
+
     const _filteredItems = (item) => {
         let searchedkey = String(isSearching.value).toLowerCase();
         let name = String(item.name);
@@ -44,9 +49,11 @@ function Search({ navigation }) {
             </Text>
         </React.Fragment>
     }
+
     const AutoRow = ({ item, index }) => {
+
         return (
-            <TouchableOpacity onPress={() => { dispatch(SelectItem({ songs: item, RouterN: "Search", play: true, destroyPair: item.Id !== selectItem?.songs?.Id ? true : false })); navigation.navigate("Player"); }}>
+            <TouchableOpacity onPress={() => { dispatch(SelectItem({ songs: item, RouterN: "Search", play: true, destroyPair: item.Id !== selectItem?.songs?.Id ? true : false })); playsougFunction(item.streamURL, dispatch); }}>
                 <View style={style.filtetValue_con}>
                     <View style={style.filtetValue_inner} >
                         {item.imageURL === "" || item.imageURL === null ? (
@@ -79,6 +86,13 @@ function Search({ navigation }) {
             _listRef.current.scrollToIndex({ animated: true, index: selectItem?.songs?.scrollId });
         }
     }, []);
+    
+    React.useEffect(() => {
+        if (interval === -1) {
+            songCompleteForward(selectItem, Songs, dispatch)
+        }
+    }, [interval])
+
 
     return (
         <View style={style.Home_con}>
@@ -99,7 +113,7 @@ function Search({ navigation }) {
                 </View>
 
             </View>
-            <View style={{ ...style.search_body, height: Object.keys(selectItem) > 0 ? Math.floor(Dimensions.get('window').height * 0.8) : route.name === "Search" ? Math.floor(Dimensions.get('window').height * 0.9) : Math.floor(Dimensions.get('window').height * 0.8) }}>
+            <View style={{ ...style.search_body, height: Object.keys(selectItem) > 0 && route.name === "Search" ? Math.floor(Dimensions.get('window').height * 0.8) : Object.keys(selectItem) > 0 && route.name === "Player" ? Math.floor(Dimensions.get('window').height * 0.7) : Math.floor(Dimensions.get('window').height * 0.8) }}>
                 <SafeAreaView>
                     <FlatList
                         data={filteredList}
@@ -112,7 +126,6 @@ function Search({ navigation }) {
                 </SafeAreaView>
             </View>
             {Object.keys(selectItem).length > 0 && <BottomPlayer DimensionsFilter={route.name} navigation={navigation} />}
-            {/* <BottomPlayer DimensionsFilter={route.name} /> */}
         </View>
 
     )

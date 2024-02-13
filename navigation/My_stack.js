@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import My_Bottom_Tab from './My_Bottom_Tab';
 import Search from '../pages/Search';
+import Player from '../pages/Player';
 
 const Stack = createNativeStackNavigator();
 
@@ -13,6 +14,8 @@ function My_stack() {
             <Stack.Navigator initialRouteName={"MyTab"} screenOptions={{ headerShown: false }}>
                 <Stack.Screen name={"MyTab"} component={My_Bottom_Tab} />
                 <Stack.Screen name={"Search"} component={Search} />
+                <Stack.Screen name={"fullScreenPlayer"} component={Player} />
+
             </Stack.Navigator>
         </NavigationContainer>
     )

@@ -4,22 +4,21 @@ import { View, StyleSheet, Dimensions, Text, TouchableOpacity } from 'react-nati
 import { useDispatch, useSelector } from 'react-redux'
 import Icons from "react-native-vector-icons/AntDesign"
 import Icon from 'react-native-vector-icons/Feather';
-import { bottomPlay } from '../Store/action'
+import { playerPlayAndPause } from '../utils/playerFunction'
+
+
 const BottomPlayer = ({ DimensionsFilter, navigation }) => {
 
     const dispatch = useDispatch();
-    const { selectItem, BottomPlayController } = useSelector((state) => state.reducer);
-
-    console.log(BottomPlayController, "Bottom")
-
+    const { selectItem, isPlaying } = useSelector((state) => state.reducer);
     const Array = [
         {
-            name: BottomPlayController === true ? "pausecircle" : "play"
+            name: isPlaying === true ? "pausecircle" : "play"
         }
     ]
     return (
-        <View style={{ ...style.container, height: DimensionsFilter === "Search" ? 65 : 55 }}>
-            <TouchableOpacity style={style.view} onPress={() => navigation.navigate("Player")}>
+        <View style={style.container}>
+            <TouchableOpacity style={style.view} onPress={() => navigation.navigate("fullScreenPlayer", { PassValue: DimensionsFilter })}>
                 <View style={style.bottomControlIcon}>
                     <View style={style.songsImaNO}>
                         <Icon name={"music"} size={30} color={"#ffff"} />
@@ -31,7 +30,7 @@ const BottomPlayer = ({ DimensionsFilter, navigation }) => {
             </TouchableOpacity>
             <View style={style.bottomControl}>
                 {Array.map((x, i) => (
-                    <TouchableOpacity key={i} onPress={() => dispatch(bottomPlay(!BottomPlayController))}>
+                    <TouchableOpacity key={i} onPress={() => playerPlayAndPause(dispatch)}>
                         <Icons name={x.name} size={36} color={"tomato"} />
                     </TouchableOpacity>
                 ))}
@@ -45,11 +44,12 @@ const style = StyleSheet.create({
         position: "absolute",
         bottom: 0,
         backgroundColor: "#dee0f7",
-        padding: 2,
+        // padding: 2,
         borderRadius: 5,
         width: Math.floor(Dimensions.get('window').width),
         flexDirection: "row",
-        justifyContent: "flex-start"
+        justifyContent: "flex-start",
+        height: 65
     },
     bottomControlIcon: {
         borderRightWidth: 1,

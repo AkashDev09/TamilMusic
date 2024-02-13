@@ -12,7 +12,6 @@ function My_Bottom_Tab() {
 
     const Tab = createBottomTabNavigator();
 
-    const { selectItem } = useSelector((state) => state.reducer);
     const Router = [
         {
             name: "Home",
@@ -20,7 +19,7 @@ function My_Bottom_Tab() {
         },
         {
             name: "Player",
-            component: Object.keys(selectItem).length > 0 ? Player : Search
+            component: Search
         },
 
     ]

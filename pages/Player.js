@@ -1,35 +1,20 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import Icon from "react-native-vector-icons/Entypo"
 import ControllerIcons from "react-native-vector-icons/AntDesign"
 import { Slider } from '@react-native-assets/slider'
 import { useDispatch, useSelector } from 'react-redux';
-import { Player as RPlayer, PlaybackCategories } from '@react-native-community/audio-toolkit'
-import { SelectItem, bottomPlay } from '../Store/action'
+import { banckward, forward, msToMINS, playSeek, playerPlayAndPause, songCompleteForward } from '../utils/playerFunction'
 
 
 
-function Player({ navigation }) {
+function Player({ navigation, route }) {
 
-    const [plays, setPlays] = React.useState(new RPlayer());
-    const [playing, setIsPlaying] = React.useState(false);
-    const [duration, setDuration] = React.useState(0);
-    const [cT, setCT] = React.useState(0);
-    const [intervalId, setIntervalId] = useState(null);
-    const [autoPlay, setAutoPlay] = useState(false);
-
-    const { selectItem, Songs, BottomPlayController } = useSelector((state) => state.reducer);
+    const { selectItem, Songs, interval, isPlaying, duration } = useSelector((state) => state.reducer);
     const myIcon = <Icon name="chevron-thin-left" size={20} color="tomato" />;
-
+    
     const dispatch = useDispatch();
 
-    console.log(BottomPlayController, "BottomPlayController")
-    const defaultPlayerOptions = {
-        // autoDestroy: true,
-        continuesToPlayInBackground: true, // Set to true for background playback
-        // category: PlaybackCategories.Playback,
-        // mixWithOthers: false,
-    };
     let Icons = [
         {
             IconName: "retweet",
@@ -40,35 +25,11 @@ function Player({ navigation }) {
             IconName: "banckward",
             size: 25,
             color: "#666670",
-            onPress: () => {
-                plays.destroy();
-                setIsPlaying(false);
-                setCT(0);
-                setDuration(0);
-                clearInterval(intervalId);
-                const currentIndex = Songs.findIndex(song => song.Id === selectItem.songs.Id);
-                const nextIndex = (currentIndex - 1) % Songs.length;
-                setPlays(new RPlayer(Songs[nextIndex].streamURL, defaultPlayerOptions));
-                dispatch(SelectItem({ songs: Songs[nextIndex], RouterN: "Search", play: false, destroyPair: true }))
-            }
+            onPress: () => banckward(selectItem, Songs, dispatch)
         },
         {
-            IconName: playing ? "pausecircle" : "play",
-            onPress: () => {
-                if (plays.isPlaying) {
-                    plays.pause();
-                    setIsPlaying(false);
-                    clearInterval(intervalId)
-                    dispatch(bottomPlay(false))
-                } else {
-                    plays.play();
-                    setIsPlaying(true);
-                    const newIntervalId = setInterval(() => setCT(plays.currentTime), 1000);
-                    setTimeout(() => setDuration(plays.duration), 1000);
-                    setIntervalId(newIntervalId);
-                    dispatch(bottomPlay(true))
-                }
-            },
+            IconName: isPlaying ? "pausecircle" : "play",
+            onPress: () => playerPlayAndPause(dispatch),
             size: 45,
             color: "tomato"
         },
@@ -76,17 +37,7 @@ function Player({ navigation }) {
             IconName: "forward",
             size: 25,
             color: "#666670",
-            onPress: () => {
-                plays.destroy();
-                setIsPlaying(false);
-                setCT(0);
-                setDuration(0);
-                clearInterval(intervalId);
-                const currentIndex = Songs.findIndex(song => song.Id === selectItem.songs.Id);
-                const nextIndex = (currentIndex + 1) % Songs.length;
-                setPlays(new RPlayer(Songs[nextIndex].streamURL, defaultPlayerOptions));
-                dispatch(SelectItem({ songs: Songs[nextIndex], RouterN: "Search", play: false, destroyPair: true }))
-            }
+            onPress: () => forward(selectItem, Songs, dispatch)
         },
         {
             IconName: "staro",
@@ -94,73 +45,21 @@ function Player({ navigation }) {
             color: "#666670"
         }
     ]
-    function msToMINS(ms) {
-        let s = ms / 1000;
-        let seconds = Math.floor(s % 60);
-        let minutes = Math.floor(s / 60);
-        return `${minutes >= 10 ? minutes : "0" + minutes}:${seconds >= 10 ? seconds : "0" + seconds}`;
-    }
-
-    useEffect(() => {
-        if (selectItem.play === true && selectItem?.destroyPair === true) {
-            setPlays(new RPlayer(selectItem?.songs?.streamURL, defaultPlayerOptions));
-            if (Object.keys(selectItem).length > 0 && selectItem.play === true) {
-                plays.destroy();
-                setIsPlaying(false);
-                setCT(0);
-                setDuration(0);
-                clearInterval(intervalId);
-                setAutoPlay(true)
-                dispatch((bottomPlay(true)))
-            }
-        } else {
-            if (selectItem.play === false && selectItem?.destroyPair === true) {
-                plays.play()
-                setIsPlaying(true);
-                const newIntervalId = setInterval(() => setCT(plays.currentTime), 1000);
-                setTimeout(() => setDuration(plays.duration), 1000);
-                setIntervalId(newIntervalId);
-                dispatch((bottomPlay(true)))
-            }
-
-        }
-    }, [selectItem])
 
     const handleChange = (e) => {
         let SongStartWith = Math.floor(e)
-        plays.seek(SongStartWith)
+        playSeek(SongStartWith)
     }
-
-    useEffect(() => {
-        if (autoPlay === true) {
-            plays.play()
-            setIsPlaying(true);
-            const newIntervalId = setInterval(() => setCT(plays.currentTime), 1000);
-            setTimeout(() => setDuration(plays.duration), 1000);
-            setIntervalId(newIntervalId);
-            dispatch((bottomPlay(true)))
-            setAutoPlay(false);
+    React.useEffect(() => {
+        if (interval === -1) {
+            songCompleteForward(selectItem, Songs, dispatch)
         }
-    }, [autoPlay])
 
-    useEffect(() => {
-        if (cT === -1) {
-            plays.destroy();
-            setIsPlaying(false);
-            setCT(0);
-            setDuration(0);
-            clearInterval(intervalId)
-            clearInterval(intervalId);
-            const currentIndex = Songs.findIndex(song => song.Id === selectItem.songs.Id);
-            const nextIndex = (currentIndex + 1) % Songs.length;
-            setPlays(new RPlayer(Songs[nextIndex].streamURL, defaultPlayerOptions));
-            dispatch(SelectItem({ songs: Songs[nextIndex], RouterN: "Search", play: false, destroyPair: true }))
-        }
-    }, [cT]);
+    }, [interval])
     return (
         <View style={styles.Player_con}>
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => navigation.navigate(Object.values(selectItem).length === 0 ? "Home" : selectItem?.RouterN)}>
+                <TouchableOpacity onPress={() => navigation.navigate(route.params.PassValue)}>
                     {myIcon}
                 </TouchableOpacity>
             </View>
@@ -176,11 +75,11 @@ function Player({ navigation }) {
                 <View style={styles.controller}>
                     <View style={styles.controllerRunner}>
                         <View style={styles.controllerTime}>
-                            <Text style={{ color: "#666670" }}>{(playing && (cT === -1)) ? "--:--" : (msToMINS(cT))}</Text>
-                            <Text style={{ color: "#666670" }}>{(playing || (duration > 0)) ? (msToMINS(duration)) : "--:--"}</Text>
+                            <Text style={{ color: "#666670" }}>{(isPlaying && (interval === -1)) ? "--:--" : (msToMINS(interval))}</Text>
+                            <Text style={{ color: "#666670" }}>{(isPlaying || (duration > 0)) ? (msToMINS(duration)) : "--:--"}</Text>
                         </View>
                         <Slider
-                            value={cT}
+                            value={interval}
                             minimumValue={0}
                             maximumValue={duration}
                             minimumTrackTintColor={'tomato'}
