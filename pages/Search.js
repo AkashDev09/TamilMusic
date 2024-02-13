@@ -86,7 +86,7 @@ function Search({ navigation }) {
             _listRef.current.scrollToIndex({ animated: true, index: selectItem?.songs?.scrollId });
         }
     }, []);
-    
+
     React.useEffect(() => {
         if (interval === -1) {
             songCompleteForward(selectItem, Songs, dispatch)
@@ -187,6 +187,7 @@ const style = StyleSheet.create({
         alignItems: "center",
         justifyContent: "space-between",
         gap: 10,
+        padding: 5
 
     },
     filtetValue_inner: {

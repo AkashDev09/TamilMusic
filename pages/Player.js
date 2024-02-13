@@ -12,7 +12,7 @@ function Player({ navigation, route }) {
 
     const { selectItem, Songs, interval, isPlaying, duration } = useSelector((state) => state.reducer);
     const myIcon = <Icon name="chevron-thin-left" size={20} color="tomato" />;
-    
+
     const dispatch = useDispatch();
 
     let Icons = [
@@ -22,7 +22,7 @@ function Player({ navigation, route }) {
             color: "#666670"
         },
         {
-            IconName: "banckward",
+            IconName: "stepbackward",
             size: 25,
             color: "#666670",
             onPress: () => banckward(selectItem, Songs, dispatch)
@@ -34,7 +34,7 @@ function Player({ navigation, route }) {
             color: "tomato"
         },
         {
-            IconName: "forward",
+            IconName: "stepforward",
             size: 25,
             color: "#666670",
             onPress: () => forward(selectItem, Songs, dispatch)
