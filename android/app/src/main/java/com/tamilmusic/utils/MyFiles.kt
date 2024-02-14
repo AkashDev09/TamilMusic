@@ -11,7 +11,7 @@ class MyFiles(private val context: Context) {
         val mp3Files = mutableListOf<String>()
 
         // Get MP3 files from internal storage
-        mp3Files.addAll(getMP3FilesFromUri(MediaStore.Audio.Media.INTERNAL_CONTENT_URI))
+        // mp3Files.addAll(getMP3FilesFromUri(MediaStore.Audio.Media.INTERNAL_CONTENT_URI))
 
         // Get MP3 files from external storage
         mp3Files.addAll(getMP3FilesFromUri(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI))
