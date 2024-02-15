@@ -1,19 +1,21 @@
 import React, { useRef, useState } from 'react'
-import { Dimensions, FlatList, ImageBackground, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native'
+import { Dimensions, FlatList, ImageBackground, NativeModules, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native'
 import Icon from 'react-native-vector-icons/Feather';
 import PlayIcon from 'react-native-vector-icons/AntDesign';
 import { useDispatch, useSelector } from 'react-redux';
-import { SelectItem, } from '../Store/action';
+import { SelectItem, thumbnailImageUri, } from '../Store/action';
 import BottomPlayer from '../components/BottomPlayer';
 import { useRoute } from '@react-navigation/native';
 import { playsougFunction, songCompleteForward } from '../utils/playerFunction';
 
 function Search({ navigation }) {
 
+    const { ThumbnailExtractor } = NativeModules;
+
     const dispatch = useDispatch();
     const route = useRoute();
 
-    const { selectItem, Songs, interval, isPlaying, duration } = useSelector((state) => state.reducer);
+    const { selectItem, Songs, interval} = useSelector((state) => state.reducer);
 
     const [filteredList, setFilteredList] = useState(Songs);
     const [isSearching, setIsSearching] = React.useState({ value: "", active: false });
@@ -21,6 +23,17 @@ function Search({ navigation }) {
     const _listRef = useRef();
 
 
+    function thunmbnail(streamURL) {
+        // Use the module function to extract thumbnail
+        ThumbnailExtractor.extractThumbnail(streamURL)
+            .then(base64Thumbnail => {
+                dispatch(thumbnailImageUri(base64Thumbnail))
+            })
+            .catch(error => {
+                // Handle error
+                dispatch(thumbnailImageUri(null))
+            });
+    }
     const filterbySearch = (e) => {
         let updatedList, query = e;
         if (e === '') {
@@ -53,7 +66,7 @@ function Search({ navigation }) {
     const AutoRow = ({ item, index }) => {
 
         return (
-            <TouchableOpacity onPress={() => { dispatch(SelectItem({ songs: item, RouterN: "Search", play: true, destroyPair: item.Id !== selectItem?.songs?.Id ? true : false })); playsougFunction(item.streamURL, dispatch); }}>
+            <TouchableOpacity onPress={() => { dispatch(SelectItem({ songs: item, RouterN: "Search", play: true, destroyPair: item.Id !== selectItem?.songs?.Id ? true : false })); playsougFunction(item.streamURL, dispatch); thunmbnail(item.streamURL) }}>
                 <View style={style.filtetValue_con}>
                     <View style={style.filtetValue_inner} >
                         {item.imageURL === "" || item.imageURL === null ? (

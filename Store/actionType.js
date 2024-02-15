@@ -4,4 +4,6 @@ export const BOTTOUMPLAY = "BOTTOUMPLAY"
 export const INTREVAL = "INTREVAL"
 export const ISPLAYING = "ISPLAYING"
 export const DURATION = "DURATION"
+export const THUMBNAIL = "THUMBNAIL"
+
 

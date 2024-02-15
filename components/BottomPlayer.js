@@ -1,6 +1,6 @@
 import { useRoute } from '@react-navigation/native'
 import React from 'react'
-import { View, StyleSheet, Dimensions, Text, TouchableOpacity } from 'react-native'
+import { View, StyleSheet, Dimensions, Text, TouchableOpacity, Image } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import Icons from "react-native-vector-icons/AntDesign"
 import Icon from 'react-native-vector-icons/Feather';
@@ -10,7 +10,7 @@ import { playerPlayAndPause } from '../utils/playerFunction'
 const BottomPlayer = ({ DimensionsFilter, navigation }) => {
 
     const dispatch = useDispatch();
-    const { selectItem, isPlaying } = useSelector((state) => state.reducer);
+    const { selectItem, isPlaying, thumbnailUri } = useSelector((state) => state.reducer);
     const Array = [
         {
             name: isPlaying === true ? "pausecircle" : "play"
@@ -20,9 +20,13 @@ const BottomPlayer = ({ DimensionsFilter, navigation }) => {
         <View style={style.container}>
             <TouchableOpacity style={style.view} onPress={() => navigation.navigate("fullScreenPlayer", { PassValue: DimensionsFilter })}>
                 <View style={style.bottomControlIcon}>
-                    <View style={style.songsImaNO}>
-                        <Icon name={"music"} size={30} color={"#ffff"} />
-                    </View>
+                    {thumbnailUri === null ? (
+                        <View style={style.songsImaNO}>
+                            <Icon name={"music"} size={30} color={"#ffff"} />
+                        </View>
+                    ) : (
+                        <Image style={style.songsImaNO} source={{ uri: `data:image/png;base64,${thumbnailUri}` }} />
+                    )}
                 </View>
                 <View style={style.bottomControlText}>
                     <Text style={{ color: "#939997", fontWeight: 700 }}>{String(selectItem?.songs?.name).length > 32 ? String(selectItem?.songs?.name).substring(0, 32) + "..." : selectItem?.songs?.name}</Text>

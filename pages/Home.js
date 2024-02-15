@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, Dimensions, NativeModules, Image } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, Dimensions, Image } from 'react-native';
 import Icon from "react-native-vector-icons/AntDesign"
 import Fav from "react-native-vector-icons/MaterialIcons"
 import Pla from "react-native-vector-icons/SimpleLineIcons"
@@ -13,14 +13,13 @@ import { songCompleteForward } from '../utils/playerFunction';
 
 const Home = ({ navigation }) => {
 
-    const { ThumbnailExtractor } = NativeModules;
+
     const dispatch = useDispatch();
 
     const route = useRoute();
 
     const { selectItem, Songs, interval, isPlaying, duration } = useSelector((state) => state.reducer);
 
-    const [imagebace64, setimagebace64] = useState()
     const myIcon = <Icon name="search1" size={20} color="tomato" />;
 
     const collection_Data = [
@@ -28,7 +27,7 @@ const Home = ({ navigation }) => {
             text: "Favorites",
             Icon: <Fav name="favorite" size={30} color="#fff" />,
             BG_color: "#ff5d5b",
-            onPress: () => thunmbnail()
+            onPress: ""
         },
         {
             text: "Playlist ",
@@ -44,18 +43,7 @@ const Home = ({ navigation }) => {
         }
     ]
 
-    function thunmbnail() {
 
-        // Use the module function to extract thumbnail
-        ThumbnailExtractor.extractThumbnail(selectItem?.songs?.streamURL)
-            .then(base64Thumbnail => {
-                setimagebace64(base64Thumbnail)
-            })
-            .catch(error => {
-                // Handle error
-                console.error(error);
-            });
-    }
     React.useEffect(() => {
         if (interval === -1) {
             songCompleteForward(selectItem, Songs, dispatch)

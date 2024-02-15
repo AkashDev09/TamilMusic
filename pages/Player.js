@@ -10,7 +10,7 @@ import { banckward, forward, msToMINS, playSeek, playerPlayAndPause, songComplet
 
 function Player({ navigation, route }) {
 
-    const { selectItem, Songs, interval, isPlaying, duration } = useSelector((state) => state.reducer);
+    const { selectItem, Songs, interval, isPlaying, duration, thumbnailUri } = useSelector((state) => state.reducer);
     const myIcon = <Icon name="chevron-thin-left" size={20} color="tomato" />;
 
     const dispatch = useDispatch();
@@ -65,7 +65,7 @@ function Player({ navigation, route }) {
             </View>
             <View style={styles.search_body}>
                 <View style={{ padding: 5, gap: 5 }}>
-                    <ImageBackground style={styles.playerCard} imageStyle={{ borderRadius: 20 }} resizeMode='cover' source={require("../Assets/Images/Cassette.jpg")} >
+                    <ImageBackground style={styles.playerCard} imageStyle={{ borderRadius: 20 }} resizeMode='cover' source={thumbnailUri === null ? require("../Assets/Images/Cassette.jpg") : { uri: `data:image/png;base64,${thumbnailUri}` }} >
                     </ImageBackground>
                     <View style={styles.SongTittel}>
                         <Text style={styles.songNameTittel}>{selectItem?.songs?.name}</Text>

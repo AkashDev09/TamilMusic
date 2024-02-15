@@ -1,4 +1,4 @@
-import { DURATION, INCREMENTVALUE, INTREVAL, ISPLAYING, SONGSVALUE } from "./actionType"
+import { DURATION, INCREMENTVALUE, INTREVAL, ISPLAYING, SONGSVALUE, THUMBNAIL } from "./actionType"
 
 export const SelectItem = (access) => {
     return {
@@ -28,6 +28,12 @@ export const interval = (access) => {
 export const isPlayings = (access) => {
     return {
         type: ISPLAYING,
+        payload: access
+    }
+}
+export const thumbnailImageUri = (access) => {
+    return {
+        type: THUMBNAIL,
         payload: access
     }
 }
