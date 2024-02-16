@@ -1,5 +1,5 @@
 import React from 'react'
-import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Dimensions, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import Icon from "react-native-vector-icons/Entypo"
 import ControllerIcons from "react-native-vector-icons/AntDesign"
 import { Slider } from '@react-native-assets/slider'
@@ -11,7 +11,7 @@ import { banckward, forward, msToMINS, playSeek, playerPlayAndPause, songComplet
 function Player({ navigation, route }) {
 
     const { selectItem, Songs, interval, isPlaying, duration, thumbnailUri } = useSelector((state) => state.reducer);
-    const myIcon = <Icon name="chevron-thin-left" size={20} color="tomato" />;
+    const myIcon = <Icon name="chevron-thin-left" size={20} color="#fff" />;
 
     const dispatch = useDispatch();
 
@@ -19,30 +19,30 @@ function Player({ navigation, route }) {
         {
             IconName: "retweet",
             size: 25,
-            color: "#666670"
+            color: "#fff"
         },
         {
             IconName: "stepbackward",
             size: 25,
-            color: "#666670",
+            color: "#fff",
             onPress: () => banckward(selectItem, Songs, dispatch)
         },
         {
             IconName: isPlaying ? "pausecircle" : "play",
             onPress: () => playerPlayAndPause(dispatch),
             size: 45,
-            color: "tomato"
+            color: "#fff"
         },
         {
             IconName: "stepforward",
             size: 25,
-            color: "#666670",
+            color: "#fff",
             onPress: () => forward(selectItem, Songs, dispatch)
         },
         {
             IconName: "staro",
             size: 25,
-            color: "#666670"
+            color: "#fff"
         }
     ]
 
@@ -57,63 +57,65 @@ function Player({ navigation, route }) {
 
     }, [interval])
     return (
-        <View style={styles.Player_con}>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={() => navigation.navigate(route.params.PassValue)}>
-                    {myIcon}
-                </TouchableOpacity>
-            </View>
-            <View style={styles.search_body}>
-                <View style={{ padding: 5, gap: 5 }}>
-                    <ImageBackground style={styles.playerCard} imageStyle={{ borderRadius: 20 }} resizeMode='cover' source={thumbnailUri === null ? require("../Assets/Images/Cassette.jpg") : { uri: `data:image/png;base64,${thumbnailUri}` }} >
-                    </ImageBackground>
-                    <View style={styles.SongTittel}>
-                        <Text style={styles.songNameTittel}>{selectItem?.songs?.name}</Text>
-                        <Text style={styles.songNameDesc}>{selectItem?.songs?.desc}</Text>
-                    </View>
+        <ImageBackground source={thumbnailUri === null ? require("../Assets/Images/background.jpg") : { uri: `data:image/png;base64,${thumbnailUri}` }} style={{ width: Math.floor(Dimensions.get('window').width), height: Math.floor(Dimensions.get('window').height) }} blurRadius={11}>
+            <View style={styles.Player_con}>
+                <View style={styles.header}>
+                    <TouchableOpacity onPress={() => navigation.navigate(route.params.PassValue)}>
+                        {myIcon}
+                    </TouchableOpacity>
                 </View>
-                <View style={styles.controller}>
-                    <View style={styles.controllerRunner}>
-                        <View style={styles.controllerTime}>
-                            <Text style={{ color: "#666670" }}>{(isPlaying && (interval === -1)) ? "--:--" : (msToMINS(interval))}</Text>
-                            <Text style={{ color: "#666670" }}>{(isPlaying || (duration > 0)) ? (msToMINS(duration)) : "--:--"}</Text>
+                <View style={styles.search_body}>
+                    <View style={{ padding: 5, gap: 5 }}>
+                        <ImageBackground style={styles.playerCard} imageStyle={{ borderRadius: 20 }} resizeMode='cover' source={thumbnailUri === null ? require("../Assets/Images/Cassette.jpg") : { uri: `data:image/png;base64,${thumbnailUri}` }} >
+                        </ImageBackground>
+                        <View style={styles.SongTittel}>
+                            <Text style={styles.songNameTittel}>{selectItem?.songs?.name}</Text>
+                            <Text style={styles.songNameDesc}>{selectItem?.songs?.desc}</Text>
                         </View>
-                        <Slider
-                            value={interval}
-                            minimumValue={0}
-                            maximumValue={duration}
-                            minimumTrackTintColor={'tomato'}
-                            maximumTrackTintColor={'grey'}
-                            thumbTintColor={'tomato'}
-                            slideOnTap={true}
-                            onSlidingComplete={handleChange}
-                        />
                     </View>
-                    <View style={styles.controllerIcon}>
-                        {Icons.map((Ico, i) => (
-                            <View key={i} style={styles.conIcon}>
-                                <TouchableOpacity onPress={Ico.onPress}>
-                                    <ControllerIcons name={Ico.IconName} size={Ico.size} color={Ico.color} />
-                                </TouchableOpacity>
+                    <View style={styles.controller}>
+                        <View style={styles.controllerRunner}>
+                            <View style={styles.controllerTime}>
+                                <Text style={{ color: "#fff" }}>{(isPlaying && (interval === -1)) ? "--:--" : (msToMINS(interval))}</Text>
+                                <Text style={{ color: "#fff" }}>{(isPlaying || (duration > 0)) ? (msToMINS(duration)) : "--:--"}</Text>
                             </View>
-                        ))}
-                    </View>
+                            <Slider
+                                value={interval}
+                                minimumValue={0}
+                                maximumValue={duration}
+                                minimumTrackTintColor={'#fff'}
+                                maximumTrackTintColor={'grey'}
+                                thumbTintColor={'#fff'}
+                                slideOnTap={true}
+                                onSlidingComplete={handleChange}
+                            />
+                        </View>
+                        <View style={styles.controllerIcon}>
+                            {Icons.map((Ico, i) => (
+                                <View key={i} style={styles.conIcon}>
+                                    <TouchableOpacity onPress={Ico.onPress}>
+                                        <ControllerIcons name={Ico.IconName} size={Ico.size} color={Ico.color} />
+                                    </TouchableOpacity>
+                                </View>
+                            ))}
+                        </View>
 
+                    </View>
                 </View>
             </View>
-        </View>
+        </ImageBackground>
     )
 }
 const styles = StyleSheet.create({
     Player_con: {
         flex: 1,
-        backgroundColor: "#fff"
+        // backgroundColor: "#fff"
     },
     header: {
         borderBottomWidth: 0.5,
-        borderBottomColor: "#313131",
+        borderBottomColor: "grey",
         height: 50,
-        backgroundColor: "#000",
+        // backgroundColor: "#000",
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
@@ -121,7 +123,7 @@ const styles = StyleSheet.create({
     },
     search_body: {
         flex: 1,
-        backgroundColor: "#dee0f7",
+        // backgroundColor: "#dee0f7",
         flexDirection: "column",
         justifyContent: "space-around",
         alignItems: "center",
@@ -140,7 +142,7 @@ const styles = StyleSheet.create({
     songNameTittel: {
         fontSize: 20,
         fontWeight: "bold",
-        color: "tomato"
+        color: "#fff"
     },
     songNameDesc: {
         fontSize: 12,
