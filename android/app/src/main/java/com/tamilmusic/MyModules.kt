@@ -7,6 +7,7 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.uimanager.ReactShadowNode
 import com.facebook.react.uimanager.ViewManager
 import com.tamilmusic.Modules.MyAudioFile
+import com.tamilmusic.Modules.MyAudioModule
 import com.tamilmusic.Modules.ThumbnailExtractorModule
 import java.util.Collections
 
@@ -15,6 +16,7 @@ class MyModules : ReactPackage {
         val modules = ArrayList<NativeModule>()
         modules.add(MyAudioFile(reactContext))
         modules.add(ThumbnailExtractorModule(reactContext))
+        modules.add(MyAudioModule(reactContext))
         return modules;
     }
 

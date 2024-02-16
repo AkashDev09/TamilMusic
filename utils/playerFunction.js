@@ -1,10 +1,12 @@
 import { Player as RPlayer } from '@react-native-community/audio-toolkit'
-import { SelectItem, durations, interval, isPlayings } from '../Store/action';
+import { SelectItem, durations, interval, isPlayings, thumbnailImageUri } from '../Store/action';
+import { NativeModules } from 'react-native';
 
 const defaultPlayerOptions = {
     continuesToPlayInBackground: true,
 };
 
+const { ThumbnailExtractor } = NativeModules;
 
 let plays = null;
 let clearIntervalId = null;
@@ -73,6 +75,7 @@ export function banckward(selectItem, AllSongs, dis) {
     const currentIndex = AllSongs.findIndex(song => song.Id === selectItem.songs.Id);
     const nextIndex = (currentIndex - 1 + AllSongs.length) % AllSongs.length;
     playsougFunction(AllSongs[nextIndex].streamURL, dis);
+    thunmbnail(AllSongs[nextIndex].streamURL, dis)
     dis(SelectItem({ songs: AllSongs[nextIndex], RouterN: "Search", }))
 }
 
@@ -93,6 +96,7 @@ export function forward(selectItem, AllSongs, dis) {
     const currentIndex = AllSongs.findIndex(song => song.Id === selectItem.songs.Id);
     const nextIndex = (currentIndex + 1) % AllSongs.length;
     playsougFunction(AllSongs[nextIndex].streamURL, dis);
+    thunmbnail(AllSongs[nextIndex].streamURL, dis)
     dis(SelectItem({ songs: AllSongs[nextIndex], RouterN: "Search", }))
 }
 
@@ -117,9 +121,20 @@ export function songCompleteForward(selectItem, AllSongs, dis) {
     const currentIndex = AllSongs.findIndex(song => song.Id === selectItem.songs.Id);
     const nextIndex = (currentIndex + 1) % AllSongs.length;
     playsougFunction(AllSongs[nextIndex].streamURL, dis);
+    thunmbnail(AllSongs[nextIndex].streamURL, dis)
     dis(SelectItem({ songs: AllSongs[nextIndex], RouterN: "Search", }))
 }
-
+export function thunmbnail(streamURL, Dis) {
+    // Use the module function to extract thumbnail
+    ThumbnailExtractor.extractThumbnail(streamURL)
+        .then(base64Thumbnail => {
+            Dis(thumbnailImageUri(base64Thumbnail))
+        })
+        .catch(error => {
+            // Handle error
+            Dis(thumbnailImageUri(null))
+        });
+}
 export function getCurrentState() {
     return {
         currentTime,

@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 
 const App = () => {
   const dispatch = useDispatch();
- 
+
 
   const requestStoragePermission = async () => {
     try {
@@ -20,7 +20,8 @@ const App = () => {
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
         // console.log('Storage permission granted');
-        _getAllAudios();
+        // _getAllAudios();
+        getAudioFiles()
       } else {
         // console.log('Storage permission denied');
       }
@@ -29,14 +30,20 @@ const App = () => {
     }
   };
 
-  const _getAllAudios = async () => {
-    NativeModules.MyFileAccess.getAllAudio(list => {
-      const fList = String(`1__${list}__1`).split(', ');
-      fList[0] = fList[0].replace('1__[', '');
-      fList[fList.length - 1] = fList[fList.length - 1].replace(']__1', '');
-      Createlist(fList);
-    });
-  };
+  // const _getAllAudios = async () => {
+  //   NativeModules.MyFileAccess.getAllAudio(list => {
+  //     const fList = String(`1__${list}__1`).split(', ');
+  //     fList[0] = fList[0].replace('1__[', '');
+  //     fList[fList.length - 1] = fList[fList.length - 1].replace(']__1', '');
+  //     Createlist(fList);
+  //   });
+  // };
+
+  const getAudioFiles = async () => {
+    NativeModules.MyAudioModule.getAudioFiles(list => {
+      Createlist(list);
+    })
+  }
 
   function Createlist(SongsList) {
 
@@ -44,23 +51,19 @@ const App = () => {
     for (let index = 0; index < SongsList.length; index++) {
       let ob = {};
       const element = SongsList[index];
-      let frist = String(element).split('/');
-      let sen = frist[frist.length - 1].split('.')[0];
-      ob['name'] = sen;
-      ob['streamURL'] = element;
-      ob['imageURL'] = '';
+      // let frist = String(element.artist).split('< >');
+      // let sen = frist[frist.length - 1].split('.')[0];
+      ob['name'] = element.title;
+      ob['streamURL'] = element.url;
+      ob['imageURL'] = element.albumArtUri;
       ob['Id'] = index + 1;
       ob['scrollId'] = index;
-      ob['desc'] = 'Unkown Artist';
+      ob['desc'] = element.artist === "<unknown>" ? "unknown" : element.artist;
       Ayy.push(ob);
     }
     dispatch(SongsLists(Ayy));
     return Ayy;
   }
-
-
-
-
 
   useEffect(() => {
     requestStoragePermission();
