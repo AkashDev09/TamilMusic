@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#000",
         overflow: "scroll",
         width: Math.floor(Dimensions.get('window').width),
-        height: Math.floor(Dimensions.get('window').height * 0.7),
+        height: Math.floor(Dimensions.get('window').height * 0.71),
     },
     collections: {
         width: 110,

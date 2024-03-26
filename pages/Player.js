@@ -51,7 +51,7 @@ function Player({ navigation, route }) {
         playSeek(SongStartWith)
     }
     React.useEffect(() => {
-        if (interval === -1) {
+        if (interval === -1) { 
             songCompleteForward(selectItem, Songs, dispatch)
         }
 
@@ -88,7 +88,7 @@ function Player({ navigation, route }) {
                                 thumbTintColor={'#fff'}
                                 slideOnTap={true}
                                 onSlidingComplete={handleChange}
-                            />
+                               />
                         </View>
                         <View style={styles.controllerIcon}>
                             {Icons.map((Ico, i) => (
