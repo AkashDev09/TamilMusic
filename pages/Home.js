@@ -10,7 +10,6 @@ import { useRoute } from '@react-navigation/native';
 import { songCompleteForward } from '../utils/playerFunction';
 
 
-
 const Home = ({ navigation }) => {
 
 
@@ -27,7 +26,7 @@ const Home = ({ navigation }) => {
             text: "Favorites",
             Icon: <Fav name="favorite" size={30} color="#fff" />,
             BG_color: "#ff5d5b",
-            onPress: ""
+            onPress: () => navigation.navigate("favorite_List")
         },
         {
             text: "Playlist ",
@@ -60,13 +59,12 @@ const Home = ({ navigation }) => {
             </View>
             <View style={styles.collections_home} >
                 {collection_Data.map((x, i) => (
-                    <View key={i} style={{ ...styles.collections, backgroundColor: x.BG_color }}>
-                        <TouchableOpacity onPress={x.onPress}>
+                    <TouchableOpacity key={i} onPress={x.onPress}>
+                        <View  style={{ ...styles.collections, backgroundColor: x.BG_color }}>
                             {x.Icon}
-                        </TouchableOpacity>
-
-                        <Text style={styles.collections_text}>{x.text}</Text>
-                    </View>
+                            <Text style={styles.collections_text}>{x.text}</Text>
+                        </View>
+                    </TouchableOpacity>
                 ))}
             </View>
             <View style={styles.homeBottom}>

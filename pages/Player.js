@@ -1,17 +1,21 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Dimensions, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import Icon from "react-native-vector-icons/Entypo"
 import ControllerIcons from "react-native-vector-icons/AntDesign"
 import { Slider } from '@react-native-assets/slider'
 import { useDispatch, useSelector } from 'react-redux';
 import { banckward, forward, msToMINS, playSeek, playerPlayAndPause, songCompleteForward } from '../utils/playerFunction'
+import { favoriteAdd, favoriteRemove } from '../Store/action'
 
 
 
 function Player({ navigation, route }) {
 
-    const { selectItem, Songs, interval, isPlaying, duration, thumbnailUri } = useSelector((state) => state.reducer);
+    const { selectItem, Songs, interval, isPlaying, duration, thumbnailUri, favorite } = useSelector((state) => state.reducer);
+    const [favBoolean, setBoolean] = useState(false)
     const myIcon = <Icon name="chevron-thin-left" size={20} color="#fff" />;
+
+    console.log(favorite, "sel")
 
     const dispatch = useDispatch();
 
@@ -42,16 +46,25 @@ function Player({ navigation, route }) {
         {
             IconName: "staro",
             size: 25,
-            color: "#fff"
+            color: "#fff",
+            onPress: () => favouriteValide(!favBoolean)
         }
     ]
-
+    const favouriteValide = (boolean) => {
+        if (boolean) {
+            dispatch(favoriteAdd({ ...selectItem.songs, fav: boolean }))
+        }
+        else {
+            dispatch(favoriteRemove(selectItem.songs.Id))
+        }
+        setBoolean(boolean)
+    }
     const handleChange = (e) => {
         let SongStartWith = Math.floor(e)
         playSeek(SongStartWith)
     }
     React.useEffect(() => {
-        if (interval === -1) { 
+        if (interval === -1) {
             songCompleteForward(selectItem, Songs, dispatch)
         }
 
@@ -88,7 +101,7 @@ function Player({ navigation, route }) {
                                 thumbTintColor={'#fff'}
                                 slideOnTap={true}
                                 onSlidingComplete={handleChange}
-                               />
+                            />
                         </View>
                         <View style={styles.controllerIcon}>
                             {Icons.map((Ico, i) => (
