@@ -59,12 +59,15 @@ const Home = ({ navigation }) => {
             </View>
             <View style={styles.collections_home} >
                 {collection_Data.map((x, i) => (
-                    <TouchableOpacity key={i} onPress={x.onPress}>
-                        <View  style={{ ...styles.collections, backgroundColor: x.BG_color }}>
-                            {x.Icon}
-                            <Text style={styles.collections_text}>{x.text}</Text>
-                        </View>
-                    </TouchableOpacity>
+                    <View key={i}>
+                        <TouchableOpacity onPress={x.onPress}>
+                            <View style={{ ...styles.collections, backgroundColor: x.BG_color }}>
+                                {x.Icon}
+                                <Text style={styles.collections_text}>{x.text}</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+
                 ))}
             </View>
             <View style={styles.homeBottom}>

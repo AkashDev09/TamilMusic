@@ -7,7 +7,7 @@ import { SelectItem, thumbnailImageUri, } from '../Store/action';
 import BottomPlayer from '../components/BottomPlayer';
 import { useRoute } from '@react-navigation/native';
 import { playsougFunction, songCompleteForward } from '../utils/playerFunction';
-
+import Fav from "react-native-vector-icons/MaterialIcons"
 function Search({ navigation }) {
 
     const { ThumbnailExtractor } = NativeModules;
@@ -15,7 +15,7 @@ function Search({ navigation }) {
     const dispatch = useDispatch();
     const route = useRoute();
 
-    const { selectItem, Songs, interval} = useSelector((state) => state.reducer);
+    const { selectItem, Songs, interval, favorite } = useSelector((state) => state.reducer);
 
     const [filteredList, setFilteredList] = useState(Songs);
     const [isSearching, setIsSearching] = React.useState({ value: "", active: false });
@@ -63,6 +63,14 @@ function Search({ navigation }) {
         </React.Fragment>
     }
 
+    function fav_value(sel, fArr) {
+        const fav = fArr.find((x) => x.Id === sel.Id)
+        if (fav !== undefined) {
+            return true
+        } else {
+            false
+        }
+    }
     const AutoRow = ({ item, index }) => {
 
         return (
@@ -85,6 +93,9 @@ function Search({ navigation }) {
                             {(isSearching.active === false) ? <Text style={item.Id === selectItem?.songs?.Id ? style.TextValueActive : style.TextValue} >{item.name}</Text> : _filteredItems(item)}
                             <Text style={style.disN}>{item.desc.length > textMax ? ((String(item.desc).substring(0, textMax - 3)) + "...") : item.desc}</Text>
                         </View>
+                        {fav_value(item, favorite) === true && <View>
+                            <Fav name="favorite" size={12} color="tomato" />
+                        </View>}
                     </View>
                 </View>
             </TouchableOpacity>

@@ -95,10 +95,12 @@ function FavoriteList({ navigation }) {
     }
 
     React.useEffect(() => {
-        if (Object.keys(selectItem).length > 0) {
-            _listRef.current.scrollToIndex({ animated: true, index: selectItem?.songs?.scrollId });
-        }
-    }, []);
+        // if (Object.keys(selectItem).length > 0) {
+        //     _listRef.current.scrollToIndex({ animated: true, index: selectItem?.songs?.scrollId });
+        // }
+        setFilteredList(favorite)
+
+    }, [favorite]);
 
     React.useEffect(() => {
         if (interval === -1) {

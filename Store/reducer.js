@@ -1,4 +1,5 @@
 import { DURATION, INCREMENTVALUE, INTREVAL, ISPLAYING, SONGSVALUE, THUMBNAIL, ADDFAVORITE, REMOVEFAVORITE } from "./actionType";
+
 const intitalState = {
     Songs: [],
     selectItem: {},
@@ -7,9 +8,7 @@ const intitalState = {
     duration: 0,
     thumbnailUri: "",
     favorite: []
-
 }
-
 
 function reducer(state = intitalState, action) {
 
