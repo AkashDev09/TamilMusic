@@ -12,7 +12,6 @@ import { favoriteAdd, favoriteRemove } from '../Store/action'
 function Player({ navigation, route }) {
 
     const { selectItem, Songs, interval, isPlaying, duration, thumbnailUri, favorite } = useSelector((state) => state.reducer);
-    const [favBoolean, setBoolean] = useState()
     const myIcon = <Icon name="chevron-thin-left" size={20} color="#fff" />;
 
 
@@ -51,16 +50,14 @@ function Player({ navigation, route }) {
             onPress: () => favouriteValide()
         }
     ]
-    const favouriteValide = (boolean) => {
+    const favouriteValide = () => {
 
         let exFavList = favorite.find((f) => f.Id === selectItem.songs.Id);
         if (exFavList !== undefined) {
             dispatch(favoriteRemove(selectItem.songs.Id))
-            setBoolean(false)
         }
         else {
-            dispatch(favoriteAdd({ ...selectItem.songs, fav: boolean }))
-            setBoolean(true)
+            dispatch(favoriteAdd({ ...selectItem.songs }))
         }
     }
     const handleChange = (e) => {
