@@ -4,8 +4,9 @@ import Icon from "react-native-vector-icons/Entypo"
 import ControllerIcons from "react-native-vector-icons/AntDesign"
 import { Slider } from '@react-native-assets/slider'
 import { useDispatch, useSelector } from 'react-redux';
-import { banckward, forward, msToMINS, playSeek, playerPlayAndPause, songCompleteForward } from '../utils/playerFunction'
+import { addItemToStorage, banckward, forward, msToMINS, playSeek, playerPlayAndPause, removeItemFromStorage, songCompleteForward,} from '../utils/playerFunction'
 import { favoriteAdd, favoriteRemove } from '../Store/action'
+
 
 
 
@@ -18,6 +19,7 @@ function Player({ navigation, route }) {
     let exFavList = favorite.find((f) => f.Id === selectItem.songs.Id);
 
     const dispatch = useDispatch();
+
 
     let Icons = [
         {
@@ -50,14 +52,18 @@ function Player({ navigation, route }) {
             onPress: () => favouriteValide()
         }
     ]
+
     const favouriteValide = () => {
 
         let exFavList = favorite.find((f) => f.Id === selectItem.songs.Id);
         if (exFavList !== undefined) {
             dispatch(favoriteRemove(selectItem.songs.Id))
+            removeItemFromStorage(selectItem.songs.Id)
+
         }
         else {
             dispatch(favoriteAdd({ ...selectItem.songs }))
+            addItemToStorage({ ...selectItem.songs })
         }
     }
     const handleChange = (e) => {

@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
 import My_stack from './navigation/My_stack';
 import { PermissionsAndroid, NativeModules } from 'react-native';
-import { SongsLists } from './Store/action';
+import { RestoreFavorite, SongsLists } from './Store/action';
 import { useDispatch } from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -44,6 +45,17 @@ const App = () => {
       Createlist(list);
     })
   }
+  const getData = async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem('Favorite');
+      if (jsonValue != null) {
+        const parsedValue = JSON.parse(jsonValue);
+        dispatch(RestoreFavorite(parsedValue));
+      }
+    } catch (e) {
+      console.error('Error reading value', e);
+    }
+  };
 
   function Createlist(SongsList) {
 
@@ -67,6 +79,7 @@ const App = () => {
 
   useEffect(() => {
     requestStoragePermission();
+    getData()
   }, []);
   return <My_stack />;
 };

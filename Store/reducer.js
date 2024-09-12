@@ -1,4 +1,4 @@
-import { DURATION, INCREMENTVALUE, INTREVAL, ISPLAYING, SONGSVALUE, THUMBNAIL, ADDFAVORITE, REMOVEFAVORITE } from "./actionType";
+import { DURATION, INCREMENTVALUE, INTREVAL, ISPLAYING, SONGSVALUE, THUMBNAIL, ADDFAVORITE, REMOVEFAVORITE, RESTOREFAVORITE } from "./actionType";
 
 const intitalState = {
     Songs: [],
@@ -7,7 +7,7 @@ const intitalState = {
     isPlaying: false,
     duration: 0,
     thumbnailUri: "",
-    favorite: []
+    favorite: [],
 }
 
 function reducer(state = intitalState, action) {
@@ -52,9 +52,19 @@ function reducer(state = intitalState, action) {
             }
             break
         case REMOVEFAVORITE:
-            console.log(action.payload.Id)
             state = {
                 ...state, favorite: [...state.favorite.filter((x) => x.Id !== action.payload)]
+            }
+            break
+        case RESTOREFAVORITE:
+            state = {
+                ...state,
+                favorite: [
+                    ...state.favorite,
+                    ...action.payload.filter(
+                        (newItem) => !state.favorite.some((item) => item.Id === newItem.Id)
+                    )
+                ]
             }
         default:
             state = { ...state };

@@ -1,6 +1,7 @@
 import { Player as RPlayer } from '@react-native-community/audio-toolkit'
 import { SelectItem, durations, interval, isPlayings, thumbnailImageUri } from '../Store/action';
 import { NativeModules } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const defaultPlayerOptions = {
     continuesToPlayInBackground: true,
@@ -13,6 +14,18 @@ let clearIntervalId = null;
 let currentTime = 0;
 let duration = 0;
 let isPlaying = false;
+
+
+const storeDataDurations = async (name, value) => {
+    try {
+        const jsonValue = {
+            duration: "",
+        };
+        await AsyncStorage.setItem('duration', JSON.stringify({ ...jsonValue, [name]: value }));
+    } catch (e) {
+        // saving error
+    }
+};
 
 export function playerPlayAndPause(dis) {
     if (plays && plays.isPlaying) {
@@ -29,7 +42,7 @@ export function playerPlayAndPause(dis) {
         dis(isPlayings(true))
 
         clearIntervalId = setInterval(() => dis(interval(plays.currentTime)), 1000);
-        setTimeout(() => dis(durations(plays.duration)), 1000);
+        setTimeout(() => { dis(durations(plays.duration)), storeDataDurations("durations", plays.duration) }, 1000);
     }
 }
 
@@ -142,3 +155,56 @@ export function getCurrentState() {
         duration
     };
 }
+// export const storeDataFavorite = async (name, value) => {
+    
+//     try {
+
+//         function AddStore() {
+//             let jsonValue = []
+//             if (name === "favorite") {
+//                 return jsonValue = [...jsonValue, value]
+//             }else if (name === "Rfavorite") {
+//                 return jsonValue = [...jsonValue.filter((x) => x.Id !== value)]
+//             }
+//             return jsonValue
+//         }
+//         await AsyncStorage.setItem('Favorite', JSON.stringify(AddStore()));
+//     } catch (e) {
+//         // saving error
+//     }
+// };
+
+
+export const addItemToStorage = async (item) => {
+    try {
+      // Get the stored array
+      const jsonValue = await AsyncStorage.getItem('Favorite');
+      let itemsArray = jsonValue != null ? JSON.parse(jsonValue) : [];
+  
+      // Add the new item
+      itemsArray.push(item);
+  
+      // Save back to storage
+      await AsyncStorage.setItem('Favorite', JSON.stringify(itemsArray));
+      console.log('Item added successfully');
+    } catch (e) {
+      console.error('Error adding item to AsyncStorage', e);
+    }
+  };
+
+  export const removeItemFromStorage = async (itemId) => {
+    try {
+      // Get the stored array
+      const jsonValue = await AsyncStorage.getItem('Favorite');
+      let itemsArray = jsonValue != null ? JSON.parse(jsonValue) : [];
+  
+      // Filter out the item you want to remove
+      const updatedArray = itemsArray.filter(item => item.Id !== itemId);
+  
+      // Save the updated array
+      await AsyncStorage.setItem('Favorite', JSON.stringify(updatedArray));
+      console.log('Item removed successfully');
+    } catch (e) {
+      console.error('Error removing item from AsyncStorage', e);
+    }
+  };

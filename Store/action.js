@@ -1,4 +1,4 @@
-import { DURATION, ADDFAVORITE, INCREMENTVALUE, INTREVAL, ISPLAYING, SONGSVALUE, THUMBNAIL, REMOVEFAVORITE } from "./actionType"
+import { DURATION, ADDFAVORITE, INCREMENTVALUE, INTREVAL, ISPLAYING, SONGSVALUE, THUMBNAIL, REMOVEFAVORITE, RESTOREFAVORITE } from "./actionType"
 
 export const SelectItem = (access) => {
     return {
@@ -46,6 +46,12 @@ export const favoriteAdd = (access) => {
 export const favoriteRemove = (access) => {
     return {
         type: REMOVEFAVORITE,
+        payload: access
+    }
+}
+export const RestoreFavorite = (access) => {
+    return {
+        type: RESTOREFAVORITE,
         payload: access
     }
 }

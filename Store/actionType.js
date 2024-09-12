@@ -7,6 +7,8 @@ export const DURATION = "DURATION"
 export const THUMBNAIL = "THUMBNAIL"
 export const ADDFAVORITE = "ADDFAVORITE"
 export const REMOVEFAVORITE = "REMOVEFAVORITE"
+export const RESTOREFAVORITE = "RESTOREFAVORITE"
+
 
 
 

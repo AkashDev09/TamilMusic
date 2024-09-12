@@ -8,6 +8,7 @@ import BottomPlayer from '../components/BottomPlayer';
 import { useRoute } from '@react-navigation/native';
 import { playsougFunction, songCompleteForward } from '../utils/playerFunction';
 import Fav from "react-native-vector-icons/MaterialIcons"
+import AsyncStorage from '@react-native-async-storage/async-storage';
 function Search({ navigation }) {
 
     const { ThumbnailExtractor } = NativeModules;
@@ -71,10 +72,18 @@ function Search({ navigation }) {
             false
         }
     }
+    const storeDataSelectItem = async (value) => {
+        try {
+            const jsonValue = JSON.stringify(value);
+            await AsyncStorage.setItem('selectItem', jsonValue);
+        } catch (e) {
+            // saving error
+        }
+    };
     const AutoRow = ({ item, index }) => {
 
         return (
-            <TouchableOpacity onPress={() => { dispatch(SelectItem({ songs: item, RouterN: "Search", play: true, destroyPair: item.Id !== selectItem?.songs?.Id ? true : false })); playsougFunction(item.streamURL, dispatch); thunmbnail(item.streamURL) }}>
+            <TouchableOpacity onPress={() => { dispatch(SelectItem({ songs: item, RouterN: "Search", play: true, destroyPair: item.Id !== selectItem?.songs?.Id ? true : false })); storeDataSelectItem({ songs: item, RouterN: "Search", play: true, destroyPair: item.Id !== selectItem?.songs?.Id ? true : false }); playsougFunction(item.streamURL, dispatch); thunmbnail(item.streamURL) }}>
                 <View style={style.filtetValue_con}>
                     <View style={style.filtetValue_inner} >
                         {item.imageURL === "" || item.imageURL === null ? (

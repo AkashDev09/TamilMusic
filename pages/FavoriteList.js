@@ -3,7 +3,7 @@ import { Dimensions, FlatList, Image, ImageBackground, NativeModules, SafeAreaVi
 import Icon from 'react-native-vector-icons/Feather';
 import PlayIcon from 'react-native-vector-icons/AntDesign';
 import { useDispatch, useSelector } from 'react-redux';
-import { SelectItem, thumbnailImageUri, } from '../Store/action';
+import { RestoreFavorite, SelectItem, thumbnailImageUri, } from '../Store/action';
 import BottomPlayer from '../components/BottomPlayer';
 import { useRoute } from '@react-navigation/native';
 import { playsougFunction, songCompleteForward } from '../utils/playerFunction';
@@ -17,11 +17,12 @@ function FavoriteList({ navigation }) {
 
     const { selectItem, Songs, interval, favorite } = useSelector((state) => state.reducer);
 
+
+
     const [filteredList, setFilteredList] = useState(favorite);
     const [isSearching, setIsSearching] = React.useState({ value: "", active: false });
 
     const _listRef = useRef();
-
 
     function thunmbnail(streamURL) {
         // Use the module function to extract thumbnail
@@ -99,9 +100,8 @@ function FavoriteList({ navigation }) {
         //     _listRef.current.scrollToIndex({ animated: true, index: selectItem?.songs?.scrollId });
         // }
         setFilteredList(favorite)
-
-    }, [favorite]);
-
+    }, [favorite])
+    
     React.useEffect(() => {
         if (interval === -1) {
             songCompleteForward(selectItem, Songs, dispatch)
