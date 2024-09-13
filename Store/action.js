@@ -13,6 +13,7 @@ export const SongsLists = (access) => {
         payload: access,
     }
 }
+ 
 export const durations = (access) => {
     return {
         type: DURATION,
