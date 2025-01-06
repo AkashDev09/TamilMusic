@@ -13,7 +13,6 @@ const RootApp = () => {
     return (
         <Provider store={Store}>
             <App/>
-            <View></View>
         </Provider>
     )
 }
